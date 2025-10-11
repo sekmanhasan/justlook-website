@@ -3,6 +3,15 @@ initFirebase();
 
 let currentEditingId = null;
 
+// Firebase servislerinin hazır olmasını bekle
+setTimeout(() => {
+    if (!window.auth || !window.db || !window.storage) {
+        console.error('Firebase servisleri yüklenemedi!');
+        document.getElementById('loginMessage').textContent = 'Firebase servisleri yüklenemedi! Sayfayı yenileyin.';
+        return;
+    }
+}, 1000);
+
 // DOM Elements
 const loginScreen = document.getElementById('loginScreen');
 const adminPanel = document.getElementById('adminPanel');
@@ -38,12 +47,12 @@ loginBtn.addEventListener('click', async () => {
     }
     
     try {
-        await auth.signInWithEmailAndPassword(email, password);
+        await window.auth.signInWithEmailAndPassword(email, password);
         loginMessage.textContent = '';
     } catch (error) {
         // İlk giriş ise hesap oluştur
         try {
-            await auth.createUserWithEmailAndPassword(email, password);
+            await window.auth.createUserWithEmailAndPassword(email, password);
             loginMessage.textContent = 'Hesap oluşturuldu ve giriş yapıldı!';
             loginMessage.style.color = '#27ae60';
         } catch (signupError) {
@@ -131,7 +140,7 @@ if (updatePasswordBtn) {
 }
 
 // Auth State
-auth.onAuthStateChanged((user) => {
+window.auth.onAuthStateChanged((user) => {
     if (user) {
         loginScreen.style.display = 'none';
         adminPanel.style.display = 'block';
@@ -226,7 +235,7 @@ saveProductBtn.addEventListener('click', async () => {
         // Upload all images
         for (let i = 0; i < selectedFiles.length; i++) {
             const file = selectedFiles[i];
-            const storageRef = storage.ref();
+            const storageRef = window.storage.ref();
             const imageRef = storageRef.child(`products/${Date.now()}_${i}_${file.name}`);
             await imageRef.put(file);
             const url = await imageRef.getDownloadURL();
@@ -247,11 +256,11 @@ saveProductBtn.addEventListener('click', async () => {
         
         if (currentEditingId) {
             // Update
-            await db.collection('products').doc(currentEditingId).update(productData);
+            await window.db.collection('products').doc(currentEditingId).update(productData);
         } else {
             // Create
             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-            await db.collection('products').add(productData);
+            await window.db.collection('products').add(productData);
         }
         
         productModal.classList.remove('active');
@@ -270,7 +279,7 @@ async function loadProducts() {
     productsList.innerHTML = '<div class="loading">Yükleniyor...</div>';
     
     try {
-        const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
+        const snapshot = await window.db.collection('products').orderBy('createdAt', 'desc').get();
         
         if (snapshot.empty) {
             productsList.innerHTML = '<div class="loading">Henüz ürün yok. Yeni ürün ekleyin!</div>';
@@ -304,7 +313,7 @@ async function loadProducts() {
 // Edit Product
 window.editProduct = async (id) => {
     currentEditingId = id;
-    const doc = await db.collection('products').doc(id).get();
+    const doc = await window.db.collection('products').doc(id).get();
     const product = doc.data();
     
     document.getElementById('modalTitle').textContent = 'Ürünü Düzenle';
@@ -325,7 +334,7 @@ window.deleteProduct = async (id) => {
     if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
     
     try {
-        await db.collection('products').doc(id).delete();
+        await window.db.collection('products').doc(id).delete();
         loadProducts();
     } catch (error) {
         alert('Hata: ' + error.message);
