@@ -1525,6 +1525,12 @@ main.search-open {
         padding: 12px 0;
     }
     
+    header .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
     .logo {
         font-size: 16px;
     }
@@ -1535,7 +1541,9 @@ main.search-open {
     }
     
     .header-icons {
-        gap: 6px;
+        gap: 4px;
+        display: flex !important;
+        align-items: center;
     }
     
     .icon-btn {

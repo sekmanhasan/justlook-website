@@ -380,6 +380,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         filterPanel.querySelector('.close-btn').addEventListener('click', () => {
             filterPanel.classList.remove('active');
+            setTimeout(() => {
+                if (filterPanel.parentNode) {
+                    filterPanel.parentNode.removeChild(filterPanel);
+                }
+            }, 300);
         });
         
         filterPanel.querySelector('.apply-filter-btn').addEventListener('click', () => {
