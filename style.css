@@ -625,6 +625,32 @@ main.search-open {
     margin-left: 12px;
 }
 
+/* Ürüne Git Butonu */
+.product-link-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.product-link-btn:hover {
+    background: #333333;
+    transform: translateY(-1px);
+}
+
+.product-link-btn:active {
+    transform: translateY(0);
+}
+
 /* Filter Panel */
 .filter-panel {
     position: fixed;
@@ -1149,6 +1175,15 @@ main.search-open {
 
 [data-theme="dark"] .product-info .price {
     color: var(--accent-color);
+}
+
+[data-theme="dark"] .product-link-btn {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+}
+
+[data-theme="dark"] .product-link-btn:hover {
+    background: var(--text-secondary);
 }
 
 [data-theme="dark"] .product-actions {

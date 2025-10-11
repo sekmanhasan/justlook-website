@@ -663,6 +663,7 @@ async function loadFirebaseProducts() {
                         <h3 class="product-name">${product.name}</h3>
                         <span class="product-price">${product.price}</span>
                     </div>
+                    ${product.link ? `<button class="product-link-btn" data-link="${product.link}">Ürüne Git</button>` : ''}
                 </div>
             `;
             
@@ -735,6 +736,19 @@ async function loadFirebaseProducts() {
             });
             
             card.addEventListener('click', () => playSound());
+            
+            // Ürüne Git butonu event listener'ı
+            const productLinkBtn = card.querySelector('.product-link-btn');
+            if (productLinkBtn) {
+                productLinkBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const link = productLinkBtn.getAttribute('data-link');
+                    if (link) {
+                        window.open(link, '_blank');
+                        playSound();
+                    }
+                });
+            }
             
             productsGrid.appendChild(card);
         });

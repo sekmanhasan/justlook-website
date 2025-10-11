@@ -179,7 +179,7 @@ function setupEventListeners() {
         });
     }
     
-    // Yeni Ürün Modal'ını Aç
+    // Yeni Ürün Modal'ını Açf
     if (addProductBtn) {
         debugLog('✅ addProductBtn bulundu, event listener ekleniyor');
         addProductBtn.addEventListener('click', () => {
@@ -215,6 +215,7 @@ function setupEventListeners() {
             const brand = document.getElementById('productBrand').value;
             const category = document.getElementById('productCategory').value;
             const price = document.getElementById('productPrice').value;
+            const link = document.getElementById('productLink').value;
             
             debugLog(`📝 Form verileri: ${name}, ${brand}, ${category}, ${price}`);
             debugLog(`📁 Seçili dosyalar: ${selectedFiles.length}`);
@@ -289,6 +290,7 @@ function setupEventListeners() {
                     brand,
                     category,
                     price,
+                    link: link || '', // Ürün linki (opsiyonel)
                     images: imageUrls,
                     imageUrl: imageUrls[0], // İlk fotoğraf (eski sistem için uyumluluk)
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -650,6 +652,7 @@ function clearProductForm() {
     document.getElementById('productBrand').value = '';
     document.getElementById('productCategory').value = '';
     document.getElementById('productPrice').value = '';
+    document.getElementById('productLink').value = '';
     document.getElementById('productImages').value = '';
     const preview = document.getElementById('imagePreview');
     if (preview) preview.innerHTML = '';
@@ -719,6 +722,7 @@ function editProduct(productId) {
         document.getElementById('productBrand').value = product.brand;
         document.getElementById('productCategory').value = product.category;
         document.getElementById('productPrice').value = product.price;
+        document.getElementById('productLink').value = product.link || '';
         
         productModal.classList.add('active');
     });
