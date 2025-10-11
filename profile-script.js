@@ -19,7 +19,7 @@ const shareWhatsApp = document.getElementById('shareWhatsApp');
 const shareTwitter = document.getElementById('shareTwitter');
 
 // Auth State
-auth.onAuthStateChanged(async (user) => {
+window.auth.onAuthStateChanged(async (user) => {
     if (!user) {
         window.location.href = 'login.html';
         return;
@@ -30,7 +30,7 @@ auth.onAuthStateChanged(async (user) => {
     
     // Load user data
     try {
-        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userDoc = await window.db.collection('users').doc(user.uid).get();
         if (userDoc.exists) {
             const userData = userDoc.data();
             userName.textContent = userData.name || 'Kullanıcı';
@@ -53,7 +53,7 @@ async function loadFavorites(favoritesList) {
     favoritesGrid.innerHTML = '<div class="loading">Favoriler yükleniyor...</div>';
     
     try {
-        const snapshot = await db.collection('products').get();
+        const snapshot = await window.db.collection('products').get();
         const products = [];
         
         snapshot.forEach((doc) => {
@@ -100,7 +100,7 @@ saveProfileBtn.addEventListener('click', async () => {
     saveProfileBtn.disabled = true;
     
     try {
-        await db.collection('users').doc(currentUser.uid).update({
+        await window.db.collection('users').doc(currentUser.uid).update({
             name: name
         });
         
@@ -118,7 +118,7 @@ saveProfileBtn.addEventListener('click', async () => {
 logoutBtn.addEventListener('click', async () => {
     if (confirm('Çıkış yapmak istediğine emin misin?')) {
         try {
-            await auth.signOut();
+            await window.auth.signOut();
             console.log('✅ Çıkış yapıldı');
             window.location.href = 'login.html';
         } catch (error) {

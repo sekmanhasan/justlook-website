@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
     logoutBtnMain.addEventListener('click', async () => {
         if (confirm('Çıkış yapmak istediğine emin misin?')) {
             try {
-                await auth.signOut();
+                await window.auth.signOut();
                 userDropdownLogged.classList.remove('active');
             } catch (error) {
                 alert('Çıkış yapılırken hata oluştu!');
@@ -293,8 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Kullanıcı durumunu kontrol et
-    if (auth) {
-        auth.onAuthStateChanged(async (user) => {
+    if (window.auth) {
+        window.auth.onAuthStateChanged(async (user) => {
             currentUser = user;
             
             if (user) {
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Kullanıcının favorilerini yükle
                 try {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    const userDoc = await window.db.collection('users').doc(user.uid).get();
                     if (userDoc.exists) {
                         const userData = userDoc.data();
                         if (userData.favorites) {
@@ -586,7 +586,7 @@ async function loadFirebaseProducts() {
     }
     
     // Firebase hazır mı kontrol et
-    if (typeof db === 'undefined' || !db) {
+    if (typeof window.db === 'undefined' || !window.db) {
         setTimeout(loadFirebaseProducts, 3000);
         return;
     }
@@ -597,11 +597,11 @@ async function loadFirebaseProducts() {
         // Tarihe göre sırala - en yeni üstte
         let snapshot;
         try {
-            snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
+            snapshot = await window.db.collection('products').orderBy('createdAt', 'desc').get();
             console.log('✅ Tarihe göre sıralandı (en yeni üstte)');
         } catch (e) {
             // createdAt yoksa veya index yoksa normal getir
-            snapshot = await db.collection('products').get();
+            snapshot = await window.db.collection('products').get();
             console.log('⚠️ Tarihe göre sıralanamadı, normal sırada');
         }
         
@@ -713,7 +713,7 @@ async function loadFirebaseProducts() {
                 
                 // Favorileri Firebase'e kaydet
                 try {
-                    await db.collection('users').doc(currentUser.uid).update({
+                    await window.db.collection('users').doc(currentUser.uid).update({
                         favorites: Array.from(favorites)
                     });
                     console.log('✅ Favoriler kaydedildi');
