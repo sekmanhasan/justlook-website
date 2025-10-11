@@ -152,15 +152,15 @@ function setupEventListeners() {
     // Ürün Kaydet
     if (saveProductBtn) {
         saveProductBtn.addEventListener('click', async () => {
-            console.log('💾 Kaydet butonuna tıklandı');
+            debugLog('💾 Kaydet butonuna tıklandı');
             
             const name = document.getElementById('productName').value;
             const brand = document.getElementById('productBrand').value;
             const category = document.getElementById('productCategory').value;
             const price = document.getElementById('productPrice').value;
             
-            console.log('📝 Form verileri:', { name, brand, category, price });
-            console.log('📁 Seçili dosyalar:', selectedFiles.length);
+            debugLog(`📝 Form verileri: ${name}, ${brand}, ${category}, ${price}`);
+            debugLog(`📁 Seçili dosyalar: ${selectedFiles.length}`);
             
             if (!name || !brand || !category || !price) {
                 alert('Lütfen tüm alanları doldurun!');
@@ -172,15 +172,15 @@ function setupEventListeners() {
                 return;
             }
             
-            console.log('✅ Form validasyonu geçti');
+            debugLog('✅ Form validasyonu geçti');
             
             saveProductBtn.textContent = `Yükleniyor... (0/${selectedFiles.length})`;
             saveProductBtn.disabled = true;
             
             try {
-                console.log('🔄 Firebase servisleri kontrol ediliyor...');
-                console.log('🔍 window.storage:', typeof window.storage);
-                console.log('🔍 window.db:', typeof window.db);
+                debugLog('🔄 Firebase servisleri kontrol ediliyor...');
+                debugLog(`🔍 window.storage: ${typeof window.storage}`);
+                debugLog(`🔍 window.db: ${typeof window.db}`);
                 
                 if (!window.storage || !window.db) {
                     alert('Firebase servisleri yüklenemedi! Sayfayı yenileyin.');
@@ -189,11 +189,11 @@ function setupEventListeners() {
                 
                 const imageUrls = [];
                 
-                console.log('📤 Fotoğraflar yükleniyor...');
+                debugLog('📤 Fotoğraflar yükleniyor...');
                 // Upload all images
                 for (let i = 0; i < selectedFiles.length; i++) {
                     const file = selectedFiles[i];
-                    console.log(`📷 Fotoğraf ${i + 1}/${selectedFiles.length} yükleniyor:`, file.name);
+                    debugLog(`📷 Fotoğraf ${i + 1}/${selectedFiles.length} yükleniyor: ${file.name}`);
                     
                     const storageRef = window.storage.ref();
                     const imageRef = storageRef.child(`products/${Date.now()}_${i}_${file.name}`);
@@ -201,7 +201,7 @@ function setupEventListeners() {
                     const url = await imageRef.getDownloadURL();
                     imageUrls.push(url);
                     
-                    console.log(`✅ Fotoğraf ${i + 1} yüklendi:`, url);
+                    debugLog(`✅ Fotoğraf ${i + 1} yüklendi: ${url.substring(0, 50)}...`);
                     saveProductBtn.textContent = `Yükleniyor... (${i + 1}/${selectedFiles.length})`;
                 }
                 
@@ -248,10 +248,11 @@ function setupEventListeners() {
     // Fotoğraf Seç
     const fileInput = document.getElementById('productImages');
     if (fileInput) {
+        debugLog('✅ Fotoğraf input bulundu, event listener ekleniyor');
         fileInput.addEventListener('change', (e) => {
-            console.log('📁 Fotoğraf seçimi değişti');
+            debugLog('📁 Fotoğraf seçimi değişti');
             selectedFiles = Array.from(e.target.files);
-            console.log('📁 Seçilen dosyalar:', selectedFiles.length);
+            debugLog(`📁 Seçilen dosyalar: ${selectedFiles.length}`);
             
             // Preview
             const preview = document.getElementById('imagePreview');
