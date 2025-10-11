@@ -68,6 +68,22 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     
+    <!-- Debug Panel -->
+    <div id="debugPanel" style="position: fixed; top: 10px; right: 10px; background: #000; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; max-width: 300px; max-height: 200px; overflow-y: auto; z-index: 9999; border: 1px solid #0f0;">
+        <div style="color: #fff; margin-bottom: 5px;">🐛 Debug Panel</div>
+        <div id="debugLog">Yükleniyor...</div>
+    </div>
+
+    <script>
+        // Debug fonksiyonu
+        function debugLog(message) {
+            const debugDiv = document.getElementById('debugLog');
+            const time = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<br>[${time}] ${message}`;
+            console.log(`[${time}] ${message}`);
+        }
+    </script>
+
     <script src="firebase-config.js"></script>
     <script src="admin-script.js"></script>
 </body>

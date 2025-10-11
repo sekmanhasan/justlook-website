@@ -12,7 +12,7 @@ let currentPasswordInput, newPasswordInput, confirmPasswordInput, passwordMessag
 
 // Sayfa yüklendikten sonra DOM elementlerini tanımla
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📄 Admin sayfası yüklendi');
+    debugLog('📄 Admin sayfası yüklendi');
     
     // DOM Elements
     loginScreen = document.getElementById('loginScreen');
@@ -38,24 +38,28 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordMessage = document.getElementById('passwordMessage');
     updatePasswordBtn = document.getElementById('updatePasswordBtn');
     
-    console.log('🔍 DOM elementleri kontrol ediliyor...');
-    console.log('🔍 addProductBtn:', addProductBtn ? 'VAR' : 'YOK');
-    console.log('🔍 saveProductBtn:', saveProductBtn ? 'VAR' : 'YOK');
-    console.log('🔍 productModal:', productModal ? 'VAR' : 'YOK');
+    debugLog('🔍 DOM elementleri kontrol ediliyor...');
+    debugLog(`🔍 addProductBtn: ${addProductBtn ? 'VAR' : 'YOK'}`);
+    debugLog(`🔍 saveProductBtn: ${saveProductBtn ? 'VAR' : 'YOK'}`);
+    debugLog(`🔍 productModal: ${productModal ? 'VAR' : 'YOK'}`);
     
     // Event listener'ları kur
     setupEventListeners();
     
     // Auth state değişikliklerini dinle
-    window.auth.onAuthStateChanged((user) => {
-        if (user) {
-            console.log('👤 Kullanıcı giriş yaptı:', user.email);
-            showAdminPanel();
-        } else {
-            console.log('👤 Kullanıcı çıkış yaptı');
-            showLoginScreen();
-        }
-    });
+    if (window.auth) {
+        window.auth.onAuthStateChanged((user) => {
+            if (user) {
+                debugLog(`👤 Kullanıcı giriş yaptı: ${user.email}`);
+                showAdminPanel();
+            } else {
+                debugLog('👤 Kullanıcı çıkış yaptı');
+                showLoginScreen();
+            }
+        });
+    } else {
+        debugLog('❌ window.auth bulunamadı');
+    }
 });
 
 // Firebase servislerinin hazır olmasını bekle
@@ -72,7 +76,7 @@ setTimeout(() => {
 
 // Event listener'ları kur
 function setupEventListeners() {
-    console.log('🔗 Event listener\'lar kuruluyor...');
+    debugLog('🔗 Event listener\'lar kuruluyor...');
     
     // Login
     if (loginBtn) {
@@ -120,20 +124,20 @@ function setupEventListeners() {
     
     // Yeni Ürün Modal'ını Aç
     if (addProductBtn) {
-        console.log('✅ addProductBtn bulundu, event listener ekleniyor');
+        debugLog('✅ addProductBtn bulundu, event listener ekleniyor');
         addProductBtn.addEventListener('click', () => {
-            console.log('➕ Yeni ürün butonu tıklandı');
+            debugLog('➕ Yeni ürün butonu tıklandı');
             currentEditingId = null;
             clearProductForm();
             if (productModal) {
                 productModal.classList.add('active');
-                console.log('✅ Modal açıldı');
+                debugLog('✅ Modal açıldı');
             } else {
-                console.error('❌ productModal bulunamadı');
+                debugLog('❌ productModal bulunamadı');
             }
         });
     } else {
-        console.error('❌ addProductBtn bulunamadı!');
+        debugLog('❌ addProductBtn bulunamadı!');
     }
     
     // Modal'ı Kapat
@@ -336,7 +340,7 @@ function setupEventListeners() {
         });
     }
     
-    console.log('✅ Event listener\'lar kuruldu');
+    debugLog('✅ Event listener\'lar kuruldu');
 }
 
 // Admin panelini göster
