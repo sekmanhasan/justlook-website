@@ -2,372 +2,439 @@
 initFirebase();
 
 let currentEditingId = null;
+let selectedFiles = [];
+
+// DOM Elements
+let loginScreen, adminPanel, emailInput, passwordInput, loginBtn, logoutBtn, loginMessage;
+let addProductBtn, productModal, closeModal, productsList, saveProductBtn;
+let changePasswordBtn, changePasswordModal, closePasswordModal;
+let currentPasswordInput, newPasswordInput, confirmPasswordInput, passwordMessage, updatePasswordBtn;
+
+// Sayfa yüklendikten sonra DOM elementlerini tanımla
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 Admin sayfası yüklendi');
+    
+    // DOM Elements
+    loginScreen = document.getElementById('loginScreen');
+    adminPanel = document.getElementById('adminPanel');
+    emailInput = document.getElementById('emailInput');
+    passwordInput = document.getElementById('passwordInput');
+    loginBtn = document.getElementById('loginBtn');
+    logoutBtn = document.getElementById('logoutBtn');
+    loginMessage = document.getElementById('loginMessage');
+    addProductBtn = document.getElementById('addProductBtn');
+    productModal = document.getElementById('productModal');
+    closeModal = document.getElementById('closeModal');
+    productsList = document.getElementById('productsList');
+    saveProductBtn = document.getElementById('saveProductBtn');
+    
+    // Şifre değiştirme elements
+    changePasswordBtn = document.getElementById('changePasswordBtn');
+    changePasswordModal = document.getElementById('changePasswordModal');
+    closePasswordModal = document.getElementById('closePasswordModal');
+    currentPasswordInput = document.getElementById('currentPassword');
+    newPasswordInput = document.getElementById('newPassword');
+    confirmPasswordInput = document.getElementById('confirmPassword');
+    passwordMessage = document.getElementById('passwordMessage');
+    updatePasswordBtn = document.getElementById('updatePasswordBtn');
+    
+    console.log('🔍 DOM elementleri kontrol ediliyor...');
+    console.log('🔍 addProductBtn:', addProductBtn ? 'VAR' : 'YOK');
+    console.log('🔍 saveProductBtn:', saveProductBtn ? 'VAR' : 'YOK');
+    console.log('🔍 productModal:', productModal ? 'VAR' : 'YOK');
+    
+    // Event listener'ları kur
+    setupEventListeners();
+    
+    // Auth state değişikliklerini dinle
+    window.auth.onAuthStateChanged((user) => {
+        if (user) {
+            console.log('👤 Kullanıcı giriş yaptı:', user.email);
+            showAdminPanel();
+        } else {
+            console.log('👤 Kullanıcı çıkış yaptı');
+            showLoginScreen();
+        }
+    });
+});
 
 // Firebase servislerinin hazır olmasını bekle
 setTimeout(() => {
     if (!window.auth || !window.db || !window.storage) {
-        console.error('Firebase servisleri yüklenemedi!');
-        document.getElementById('loginMessage').textContent = 'Firebase servisleri yüklenemedi! Sayfayı yenileyin.';
+        console.error('❌ Firebase servisleri yüklenemedi!');
+        if (loginMessage) {
+            loginMessage.textContent = 'Firebase servisleri yüklenemedi! Sayfayı yenileyin.';
+        }
         return;
     }
+    console.log('✅ Firebase servisleri hazır');
 }, 1000);
 
-// DOM Elements
-const loginScreen = document.getElementById('loginScreen');
-const adminPanel = document.getElementById('adminPanel');
-const emailInput = document.getElementById('emailInput');
-const passwordInput = document.getElementById('passwordInput');
-const loginBtn = document.getElementById('loginBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const loginMessage = document.getElementById('loginMessage');
-const addProductBtn = document.getElementById('addProductBtn');
-const productModal = document.getElementById('productModal');
-const closeModal = document.getElementById('closeModal');
-const productsList = document.getElementById('productsList');
-const saveProductBtn = document.getElementById('saveProductBtn');
-
-// Şifre değiştirme elements
-const changePasswordBtn = document.getElementById('changePasswordBtn');
-const changePasswordModal = document.getElementById('changePasswordModal');
-const closePasswordModal = document.getElementById('closePasswordModal');
-const updatePasswordBtn = document.getElementById('updatePasswordBtn');
-const currentPasswordInput = document.getElementById('currentPassword');
-const newPasswordInput = document.getElementById('newPassword');
-const confirmPasswordInput = document.getElementById('confirmPassword');
-const passwordMessage = document.getElementById('passwordMessage');
-
-// Login
-loginBtn.addEventListener('click', async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
+// Event listener'ları kur
+function setupEventListeners() {
+    console.log('🔗 Event listener\'lar kuruluyor...');
     
-    if (!email || !password) {
-        loginMessage.textContent = 'E-posta ve şifre gerekli!';
-        return;
+    // Login
+    if (loginBtn) {
+        loginBtn.addEventListener('click', async () => {
+            console.log('🔐 Login butonu tıklandı');
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            
+            if (!email || !password) {
+                loginMessage.textContent = 'E-posta ve şifre gerekli!';
+                loginMessage.style.color = '#e74c3c';
+                return;
+            }
+            
+            try {
+                await window.auth.signInWithEmailAndPassword(email, password);
+                console.log('✅ Giriş başarılı');
+            } catch (error) {
+                console.log('❌ Giriş hatası:', error.code);
+                if (error.code === 'auth/user-not-found') {
+                    // Kullanıcı yoksa hesap oluştur
+                    try {
+                        await window.auth.createUserWithEmailAndPassword(email, password);
+                        loginMessage.textContent = 'Hesap oluşturuldu ve giriş yapıldı!';
+                        loginMessage.style.color = '#27ae60';
+                    } catch (signupError) {
+                        loginMessage.textContent = 'Hata: ' + error.message;
+                        loginMessage.style.color = '#e74c3c';
+                    }
+                } else {
+                    loginMessage.textContent = 'Giriş hatası: ' + error.message;
+                    loginMessage.style.color = '#e74c3c';
+                }
+            }
+        });
     }
     
-    try {
-        await window.auth.signInWithEmailAndPassword(email, password);
-        loginMessage.textContent = '';
-    } catch (error) {
-        // İlk giriş ise hesap oluştur
-        try {
-            await window.auth.createUserWithEmailAndPassword(email, password);
-            loginMessage.textContent = 'Hesap oluşturuldu ve giriş yapıldı!';
-            loginMessage.style.color = '#27ae60';
-        } catch (signupError) {
-            loginMessage.textContent = 'Hata: ' + error.message;
-            loginMessage.style.color = '#e74c3c';
-        }
-    }
-});
-
-// Logout
-logoutBtn.addEventListener('click', () => {
-    auth.signOut();
-});
-
-// Şifre değiştirme modal'ını aç
-if (changePasswordBtn) {
-    changePasswordBtn.addEventListener('click', () => {
-        console.log('Şifre değiştir butonu tıklandı');
-        changePasswordModal.style.display = 'flex';
-        currentPasswordInput.value = '';
-        newPasswordInput.value = '';
-        confirmPasswordInput.value = '';
-        passwordMessage.textContent = '';
-    });
-} else {
-    console.error('Şifre değiştir butonu bulunamadı!');
-}
-
-// Şifre değiştirme modal'ını kapat
-if (closePasswordModal) {
-    closePasswordModal.addEventListener('click', () => {
-        changePasswordModal.style.display = 'none';
-    });
-}
-
-// Şifre güncelle
-if (updatePasswordBtn) {
-    updatePasswordBtn.addEventListener('click', async () => {
-    const currentPassword = currentPasswordInput.value;
-    const newPassword = newPasswordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-    
-    if (!currentPassword || !newPassword || !confirmPassword) {
-        passwordMessage.textContent = 'Tüm alanları doldurun!';
-        passwordMessage.style.color = '#e74c3c';
-        return;
+    // Logout
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            console.log('🚪 Logout butonu tıklandı');
+            window.auth.signOut();
+        });
     }
     
-    if (newPassword !== confirmPassword) {
-        passwordMessage.textContent = 'Yeni şifreler eşleşmiyor!';
-        passwordMessage.style.color = '#e74c3c';
-        return;
+    // Yeni Ürün Modal'ını Aç
+    if (addProductBtn) {
+        addProductBtn.addEventListener('click', () => {
+            console.log('➕ Yeni ürün butonu tıklandı');
+            currentEditingId = null;
+            clearProductForm();
+            productModal.classList.add('active');
+        });
     }
     
-    if (newPassword.length < 6) {
-        passwordMessage.textContent = 'Yeni şifre en az 6 karakter olmalı!';
-        passwordMessage.style.color = '#e74c3c';
-        return;
+    // Modal'ı Kapat
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            console.log('❌ Modal kapatma butonu tıklandı');
+            productModal.classList.remove('active');
+            selectedFiles = [];
+        });
     }
     
-    try {
-        // Mevcut kullanıcıyı yeniden doğrula
-        const user = auth.currentUser;
-        if (!user) {
-            passwordMessage.textContent = 'Oturum bulunamadı!';
-            passwordMessage.style.color = '#e74c3c';
-            return;
-        }
-        
-        // Şifreyi güncelle
-        await user.updatePassword(newPassword);
-        
-        passwordMessage.textContent = 'Şifre başarıyla güncellendi!';
-        passwordMessage.style.color = '#27ae60';
-        
-        setTimeout(() => {
+    // Ürün Kaydet
+    if (saveProductBtn) {
+        saveProductBtn.addEventListener('click', async () => {
+            console.log('💾 Kaydet butonuna tıklandı');
+            
+            const name = document.getElementById('productName').value;
+            const brand = document.getElementById('productBrand').value;
+            const category = document.getElementById('productCategory').value;
+            const price = document.getElementById('productPrice').value;
+            
+            console.log('📝 Form verileri:', { name, brand, category, price });
+            console.log('📁 Seçili dosyalar:', selectedFiles.length);
+            
+            if (!name || !brand || !category || !price) {
+                alert('Lütfen tüm alanları doldurun!');
+                return;
+            }
+            
+            if (selectedFiles.length === 0) {
+                alert('En az 1 fotoğraf eklemelisiniz!');
+                return;
+            }
+            
+            console.log('✅ Form validasyonu geçti');
+            
+            saveProductBtn.textContent = `Yükleniyor... (0/${selectedFiles.length})`;
+            saveProductBtn.disabled = true;
+            
+            try {
+                console.log('🔄 Firebase servisleri kontrol ediliyor...');
+                console.log('🔍 window.storage:', typeof window.storage);
+                console.log('🔍 window.db:', typeof window.db);
+                
+                if (!window.storage || !window.db) {
+                    alert('Firebase servisleri yüklenemedi! Sayfayı yenileyin.');
+                    return;
+                }
+                
+                const imageUrls = [];
+                
+                console.log('📤 Fotoğraflar yükleniyor...');
+                // Upload all images
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    console.log(`📷 Fotoğraf ${i + 1}/${selectedFiles.length} yükleniyor:`, file.name);
+                    
+                    const storageRef = window.storage.ref();
+                    const imageRef = storageRef.child(`products/${Date.now()}_${i}_${file.name}`);
+                    await imageRef.put(file);
+                    const url = await imageRef.getDownloadURL();
+                    imageUrls.push(url);
+                    
+                    console.log(`✅ Fotoğraf ${i + 1} yüklendi:`, url);
+                    saveProductBtn.textContent = `Yükleniyor... (${i + 1}/${selectedFiles.length})`;
+                }
+                
+                console.log('💾 Ürün verisi oluşturuluyor...');
+                const productData = {
+                    name,
+                    brand,
+                    category,
+                    price,
+                    images: imageUrls,
+                    imageUrl: imageUrls[0], // İlk fotoğraf (eski sistem için uyumluluk)
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                console.log('📦 Ürün verisi:', productData);
+                
+                if (currentEditingId) {
+                    // Update
+                    console.log('🔄 Ürün güncelleniyor...');
+                    await window.db.collection('products').doc(currentEditingId).update(productData);
+                    console.log('✅ Ürün güncellendi');
+                } else {
+                    // Create
+                    console.log('➕ Yeni ürün oluşturuluyor...');
+                    productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await window.db.collection('products').add(productData);
+                    console.log('✅ Yeni ürün oluşturuldu');
+                }
+                
+                productModal.classList.remove('active');
+                selectedFiles = [];
+                loadProducts();
+            } catch (error) {
+                console.error('❌ Ürün kaydetme hatası:', error);
+                alert('Hata: ' + error.message);
+            } finally {
+                saveProductBtn.disabled = false;
+                saveProductBtn.textContent = 'Kaydet';
+                console.log('🔄 Buton tekrar aktif edildi');
+            }
+        });
+    }
+    
+    // Fotoğraf Seç
+    const fileInput = document.getElementById('productImages');
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            console.log('📁 Fotoğraf seçimi değişti');
+            selectedFiles = Array.from(e.target.files);
+            console.log('📁 Seçilen dosyalar:', selectedFiles.length);
+            
+            // Preview
+            const preview = document.getElementById('imagePreview');
+            if (preview) {
+                preview.innerHTML = '';
+                selectedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.width = '100px';
+                        img.style.height = '100px';
+                        img.style.objectFit = 'cover';
+                        img.style.margin = '5px';
+                        img.style.borderRadius = '8px';
+                        preview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+    }
+    
+    // Şifre değiştirme
+    if (changePasswordBtn) {
+        changePasswordBtn.addEventListener('click', () => {
+            console.log('🔐 Şifre değiştir butonu tıklandı');
+            changePasswordModal.style.display = 'flex';
+            currentPasswordInput.value = '';
+            newPasswordInput.value = '';
+            confirmPasswordInput.value = '';
+            passwordMessage.textContent = '';
+        });
+    }
+    
+    if (closePasswordModal) {
+        closePasswordModal.addEventListener('click', () => {
             changePasswordModal.style.display = 'none';
-        }, 2000);
-        
-    } catch (error) {
-        passwordMessage.textContent = 'Hata: ' + error.message;
-        passwordMessage.style.color = '#e74c3c';
+        });
     }
-    });
+    
+    if (updatePasswordBtn) {
+        updatePasswordBtn.addEventListener('click', async () => {
+            const currentPassword = currentPasswordInput.value;
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                passwordMessage.textContent = 'Tüm alanları doldurun!';
+                passwordMessage.style.color = '#e74c3c';
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                passwordMessage.textContent = 'Yeni şifreler eşleşmiyor!';
+                passwordMessage.style.color = '#e74c3c';
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                passwordMessage.textContent = 'Yeni şifre en az 6 karakter olmalı!';
+                passwordMessage.style.color = '#e74c3c';
+                return;
+            }
+            
+            try {
+                const user = window.auth.currentUser;
+                if (!user) {
+                    passwordMessage.textContent = 'Oturum bulunamadı!';
+                    passwordMessage.style.color = '#e74c3c';
+                    return;
+                }
+                
+                await user.updatePassword(newPassword);
+                passwordMessage.textContent = 'Şifre başarıyla güncellendi!';
+                passwordMessage.style.color = '#27ae60';
+                
+                setTimeout(() => {
+                    changePasswordModal.style.display = 'none';
+                }, 2000);
+                
+            } catch (error) {
+                passwordMessage.textContent = 'Hata: ' + error.message;
+                passwordMessage.style.color = '#e74c3c';
+            }
+        });
+    }
+    
+    console.log('✅ Event listener\'lar kuruldu');
 }
 
-// Auth State
-window.auth.onAuthStateChanged((user) => {
-    if (user) {
-        loginScreen.style.display = 'none';
-        adminPanel.style.display = 'block';
-        loadProducts();
-    } else {
-        loginScreen.style.display = 'flex';
-        adminPanel.style.display = 'none';
-    }
-});
+// Admin panelini göster
+function showAdminPanel() {
+    if (loginScreen) loginScreen.style.display = 'none';
+    if (adminPanel) adminPanel.style.display = 'block';
+    loadProducts();
+}
 
-// Modal
-let selectedFiles = [];
+// Login ekranını göster
+function showLoginScreen() {
+    if (loginScreen) loginScreen.style.display = 'flex';
+    if (adminPanel) adminPanel.style.display = 'none';
+}
 
-addProductBtn.addEventListener('click', () => {
-    currentEditingId = null;
-    selectedFiles = [];
-    document.getElementById('modalTitle').textContent = 'Yeni Ürün';
+// Ürün formunu temizle
+function clearProductForm() {
     document.getElementById('productName').value = '';
     document.getElementById('productBrand').value = '';
     document.getElementById('productCategory').value = '';
     document.getElementById('productPrice').value = '';
     document.getElementById('productImages').value = '';
-    document.getElementById('imagesPreview').innerHTML = '';
-    productModal.classList.add('active');
-});
-
-closeModal.addEventListener('click', () => {
-    productModal.classList.remove('active');
-});
-
-// Multiple Images Preview
-document.getElementById('productImages').addEventListener('change', (e) => {
-    const files = Array.from(e.target.files);
-    
-    if (files.length + selectedFiles.length > 8) {
-        alert('Maksimum 8 fotoğraf ekleyebilirsiniz!');
-        return;
-    }
-    
-    selectedFiles = [...selectedFiles, ...files];
-    updateImagesPreview();
-});
-
-function updateImagesPreview() {
-    const preview = document.getElementById('imagesPreview');
-    preview.innerHTML = '';
-    
-    selectedFiles.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const div = document.createElement('div');
-            div.className = 'preview-item';
-            div.innerHTML = `
-                <img src="${e.target.result}" alt="Preview ${index + 1}">
-                <button class="preview-remove" data-index="${index}">✕</button>
-            `;
-            
-            div.querySelector('.preview-remove').addEventListener('click', () => {
-                selectedFiles.splice(index, 1);
-                updateImagesPreview();
-            });
-            
-            preview.appendChild(div);
-        };
-        reader.readAsDataURL(file);
-    });
+    document.getElementById('imagePreview').innerHTML = '';
+    selectedFiles = [];
 }
 
-// Save Product
-saveProductBtn.addEventListener('click', async () => {
-    console.log('💾 Kaydet butonuna tıklandı');
-    
-    const name = document.getElementById('productName').value;
-    const brand = document.getElementById('productBrand').value;
-    const category = document.getElementById('productCategory').value;
-    const price = document.getElementById('productPrice').value;
-    
-    console.log('📝 Form verileri:', { name, brand, category, price });
-    console.log('📁 Seçili dosyalar:', selectedFiles.length);
-    
-    if (!name || !brand || !category || !price) {
-        alert('Lütfen tüm alanları doldurun!');
-        return;
-    }
-    
-    if (selectedFiles.length === 0) {
-        alert('En az 1 fotoğraf eklemelisiniz!');
-        return;
-    }
-    
-    console.log('✅ Form validasyonu geçti');
-    
-    saveProductBtn.textContent = `Yükleniyor... (0/${selectedFiles.length})`;
-    saveProductBtn.disabled = true;
-    
-    try {
-        console.log('🔄 Firebase servisleri kontrol ediliyor...');
-        console.log('🔍 window.storage:', typeof window.storage);
-        console.log('🔍 window.db:', typeof window.db);
-        
-        if (!window.storage || !window.db) {
-            alert('Firebase servisleri yüklenemedi! Sayfayı yenileyin.');
-            return;
-        }
-        
-        const imageUrls = [];
-        
-        console.log('📤 Fotoğraflar yükleniyor...');
-        // Upload all images
-        for (let i = 0; i < selectedFiles.length; i++) {
-            const file = selectedFiles[i];
-            console.log(`📷 Fotoğraf ${i + 1}/${selectedFiles.length} yükleniyor:`, file.name);
-            
-            const storageRef = window.storage.ref();
-            const imageRef = storageRef.child(`products/${Date.now()}_${i}_${file.name}`);
-            await imageRef.put(file);
-            const url = await imageRef.getDownloadURL();
-            imageUrls.push(url);
-            
-            console.log(`✅ Fotoğraf ${i + 1} yüklendi:`, url);
-            saveProductBtn.textContent = `Yükleniyor... (${i + 1}/${selectedFiles.length})`;
-        }
-        
-        console.log('💾 Ürün verisi oluşturuluyor...');
-        const productData = {
-            name,
-            brand,
-            category,
-            price,
-            images: imageUrls,
-            imageUrl: imageUrls[0], // İlk fotoğraf (eski sistem için uyumluluk)
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        
-        console.log('📦 Ürün verisi:', productData);
-        
-        if (currentEditingId) {
-            // Update
-            console.log('🔄 Ürün güncelleniyor...');
-            await window.db.collection('products').doc(currentEditingId).update(productData);
-            console.log('✅ Ürün güncellendi');
-        } else {
-            // Create
-            console.log('➕ Yeni ürün oluşturuluyor...');
-            productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-            await window.db.collection('products').add(productData);
-            console.log('✅ Yeni ürün oluşturuldu');
-        }
-        
-        productModal.classList.remove('active');
-        selectedFiles = [];
-        loadProducts();
-    } catch (error) {
-        console.error('❌ Ürün kaydetme hatası:', error);
-        alert('Hata: ' + error.message);
-    } finally {
-        saveProductBtn.disabled = false;
-        saveProductBtn.textContent = 'Kaydet';
-        console.log('🔄 Buton tekrar aktif edildi');
-    }
-});
-
-// Load Products
+// Ürünleri yükle
 async function loadProducts() {
-    productsList.innerHTML = '<div class="loading">Yükleniyor...</div>';
+    console.log('📦 Ürünler yükleniyor...');
     
     try {
         const snapshot = await window.db.collection('products').orderBy('createdAt', 'desc').get();
+        const products = [];
         
-        if (snapshot.empty) {
-            productsList.innerHTML = '<div class="loading">Henüz ürün yok. Yeni ürün ekleyin!</div>';
-            return;
-        }
-        
-        productsList.innerHTML = '';
-        
-        snapshot.forEach((doc) => {
-            const product = doc.data();
-            const productItem = document.createElement('div');
-            productItem.className = 'product-item';
-            productItem.innerHTML = `
-                <h3>${product.name}</h3>
-                <p><strong>Marka:</strong> ${product.brand}</p>
-                <p><strong>Kategori:</strong> ${product.category}</p>
-                <p><strong>Fiyat:</strong> ${product.price}</p>
-                ${product.imageUrl ? `<img src="${product.imageUrl}" style="max-width: 100%; margin-top: 12px; border-radius: 8px;">` : ''}
-                <div class="product-actions">
-                    <button class="btn-edit" onclick="editProduct('${doc.id}')">Düzenle</button>
-                    <button class="btn-delete" onclick="deleteProduct('${doc.id}')">Sil</button>
-                </div>
-            `;
-            productsList.appendChild(productItem);
+        snapshot.forEach(doc => {
+            products.push({ id: doc.id, ...doc.data() });
         });
+        
+        console.log(`📦 ${products.length} ürün yüklendi`);
+        renderProducts(products);
+        
     } catch (error) {
-        productsList.innerHTML = '<div class="loading">Hata: ' + error.message + '</div>';
+        console.error('❌ Ürün yükleme hatası:', error);
     }
 }
 
-// Edit Product
-window.editProduct = async (id) => {
-    currentEditingId = id;
-    const doc = await window.db.collection('products').doc(id).get();
-    const product = doc.data();
+// Ürünleri render et
+function renderProducts(products) {
+    if (!productsList) return;
     
-    document.getElementById('modalTitle').textContent = 'Ürünü Düzenle';
-    document.getElementById('productName').value = product.name;
-    document.getElementById('productBrand').value = product.brand;
-    document.getElementById('productCategory').value = product.category;
-    document.getElementById('productPrice').value = product.price;
+    productsList.innerHTML = '';
     
-    if (product.imageUrl) {
-        document.getElementById('imagePreview').innerHTML = `<img src="${product.imageUrl}" alt="Current">`;
+    products.forEach(product => {
+        const productDiv = document.createElement('div');
+        productDiv.className = 'product-item';
+        productDiv.innerHTML = `
+            <div class="product-images">
+                ${product.images && product.images.length > 0 ? 
+                    product.images.map(img => `<img src="${img}" alt="${product.name}">`).join('') :
+                    `<img src="${product.imageUrl}" alt="${product.name}">`
+                }
+            </div>
+            <div class="product-info">
+                <h3>${product.name}</h3>
+                <p><strong>Marka:</strong> ${product.brand}</p>
+                <p><strong>Kategori:</strong> ${product.category}</p>
+                <p><strong>Fiyat:</strong> ${product.price} TL</p>
+                <div class="product-actions">
+                    <button onclick="editProduct('${product.id}')" class="edit-btn">Düzenle</button>
+                    <button onclick="deleteProduct('${product.id}')" class="delete-btn">Sil</button>
+                </div>
+            </div>
+        `;
+        productsList.appendChild(productDiv);
+    });
+}
+
+// Ürün düzenle
+function editProduct(productId) {
+    console.log('✏️ Ürün düzenleniyor:', productId);
+    currentEditingId = productId;
+    
+    // Ürün bilgilerini al ve formu doldur
+    window.db.collection('products').doc(productId).get().then(doc => {
+        const product = doc.data();
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productBrand').value = product.brand;
+        document.getElementById('productCategory').value = product.category;
+        document.getElementById('productPrice').value = product.price;
+        
+        productModal.classList.add('active');
+    });
+}
+
+// Ürün sil
+async function deleteProduct(productId) {
+    console.log('🗑️ Ürün siliniyor:', productId);
+    
+    if (confirm('Bu ürünü silmek istediğinizden emin misiniz?')) {
+        try {
+            await window.db.collection('products').doc(productId).delete();
+            console.log('✅ Ürün silindi');
+            loadProducts();
+        } catch (error) {
+            console.error('❌ Ürün silme hatası:', error);
+            alert('Ürün silinirken hata oluştu: ' + error.message);
+        }
     }
-    
-    productModal.classList.add('active');
-};
-
-// Delete Product
-window.deleteProduct = async (id) => {
-    if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
-    
-    try {
-        await window.db.collection('products').doc(id).delete();
-        loadProducts();
-    } catch (error) {
-        alert('Hata: ' + error.message);
-    }
-};
-
-
+}
