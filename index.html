@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>justlook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-animation">
+                    <svg class="logo-circles" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="circle-1" cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1"/>
+                        <circle class="circle-2" cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1"/>
+                    </svg>
+                    <svg class="logo-square" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="6" width="12" height="12" stroke="currentColor" stroke-width="1"/>
+                    </svg>
+                </div>
+                <span>justlook</span>
+            </a>
+            <nav class="header-icons">
+                <button class="icon-btn" aria-label="Filter">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 5H18M5 10H15M8 15H12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="9" cy="9" r="5" stroke="currentColor" stroke-width="1.2"/>
+                        <path d="M13 13L17 17" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" aria-label="Favorites">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 17L4.5 14L2 8.5L4 4L8.5 2.5L10 3L11.5 2.5L16 4L18 8.5L15.5 14L10 17Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+                        <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.2"/>
+                    </svg>
+                </button>
+                
+                <!-- Tema Değiştirici -->
+                <div class="theme-switch" id="themeSwitch">
+                    <div class="switch-track">
+                        <div class="switch-thumb"></div>
+                    </div>
+                    <span class="switch-label" id="switchLabel">Light</span>
+                </div>
+                
+                <!-- Dil Değiştirme -->
+                <div class="language-toggle" id="languageToggle">
+                    <span class="lang-text" id="langText">TR</span>
+                    <div class="lang-options" id="langOptions">
+                        <button class="lang-btn active" data-lang="tr">🇹🇷 TR</button>
+                        <button class="lang-btn" data-lang="en">🇺🇸 EN</button>
+                    </div>
+                </div>
+                
+                <!-- Kullanıcı Menüsü -->
+                <div class="user-menu">
+                    <button class="user-btn" id="userBtn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.2"/>
+                            <path d="M4 17C4 14 6.5 12 10 12C13.5 12 16 14 16 17" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <div class="user-dropdown guest" id="userDropdown">
+                        <button class="dropdown-item" id="loginBtn" data-tr="Giriş Yap" data-en="Login">Giriş Yap</button>
+                        <button class="dropdown-item" id="signupBtn" data-tr="Kayıt Ol" data-en="Sign Up">Kayıt Ol</button>
+                    </div>
+                    <div class="user-dropdown logged" id="userDropdownLogged">
+                        <div class="dropdown-user-info" id="dropdownUserName">Kullanıcı</div>
+                        <button class="dropdown-item" id="profileBtn" data-tr="Profilim" data-en="Profile">Profilim</button>
+                        <button class="dropdown-item logout" id="logoutBtnMain" data-tr="Çıkış" data-en="Logout">Çıkış</button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+
+    <main class="container">
+        <div class="products-grid">
+            <!-- Ürünler Firebase'den yüklenecek -->
+        </div>
+    </main>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // Firebase'in yüklenmesini bekle
+        window.firebaseReady = new Promise((resolve) => {
+            console.log('🔥 Firebase promise başlatılıyor...');
+            console.log('Firebase var mı:', typeof firebase !== 'undefined');
+            
+            if (typeof firebase !== 'undefined') {
+                console.log('✅ Firebase SDK yüklü, initFirebase çağrılıyor...');
+                initFirebase();
+                console.log('db değeri:', typeof db, db);
+                resolve();
+            } else {
+                console.log('⏳ Firebase SDK yok, 500ms bekleniyor...');
+                setTimeout(() => {
+                    console.log('⏳ Tekrar deneniyor...');
+                    initFirebase();
+                    console.log('db değeri:', typeof db, db);
+                    resolve();
+                }, 500);
+            }
+        });
+    </script>
+    <script src="script-simple.js"></script>
+</body>
+</html>

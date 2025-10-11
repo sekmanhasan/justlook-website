@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - justlook</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fafafa;
+        }
+        
+        .login-box {
+            background: #ffffff;
+            padding: 40px 32px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 360px;
+            border: 0.3px solid #e0e0e0;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        
+        .login-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 20px;
+            font-weight: 200;
+            color: #000;
+            text-decoration: none;
+            margin-bottom: 8px;
+        }
+        
+        .login-header h2 {
+            font-size: 22px;
+            font-weight: 300;
+            margin: 12px 0 4px 0;
+        }
+        
+        .input-group {
+            margin-bottom: 12px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 200;
+            transition: border 0.2s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #000;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 13px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 4px;
+        }
+        
+        .btn-login:hover {
+            background: #333;
+        }
+        
+        .toggle-mode {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #999;
+            font-weight: 200;
+        }
+        
+        .toggle-mode a {
+            color: #000;
+            text-decoration: none;
+            font-weight: 400;
+            border-bottom: 1px solid #000;
+        }
+        
+        .toggle-mode a:hover {
+            opacity: 0.7;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+        
+        .message.error {
+            background: #ffe5e5;
+            color: #e74c3c;
+            display: block;
+        }
+        
+        .message.success {
+            background: #e8f5e9;
+            color: #27ae60;
+            display: block;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            font-size: 13px;
+            color: #999;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .divider span {
+            background: #ffffff;
+            padding: 0 15px;
+            position: relative;
+        }
+        
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            background: #ffffff;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .btn-google:hover {
+            background: #f8f9fa;
+            border-color: #dadce0;
+        }
+        
+        .btn-google svg {
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <a href="/" class="login-logo">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="6" width="12" height="12" stroke="currentColor" stroke-width="1"/>
+                    </svg>
+                    <span>justlook</span>
+                </a>
+                <h2>Kayıt Ol</h2>
+            </div>
+            
+            <form id="signupForm">
+                <div class="input-group">
+                    <input type="text" id="name" placeholder="İsim">
+                </div>
+                
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="E-posta" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Şifre (en az 6 karakter)" required>
+                </div>
+                
+                <button type="submit" class="btn-login">Kayıt Ol</button>
+                
+                <div class="divider">
+                    <span>veya</span>
+                </div>
+                
+                <button type="button" class="btn-google" id="googleSignupBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Google ile Kayıt Ol
+                </button>
+                
+                <div class="message" id="message"></div>
+            </form>
+            
+            <div class="toggle-mode">
+                <span>Zaten hesabın var mı?</span>
+                <a href="login.html">Giriş Yap</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        // Firebase'i başlat
+        if (typeof initFirebase !== 'undefined') {
+            initFirebase();
+        }
+        
+        const signupForm = document.getElementById('signupForm');
+        const message = document.getElementById('message');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const nameInput = document.getElementById('name');
+        const googleSignupBtn = document.getElementById('googleSignupBtn');
+        
+        // Google ile kayıt/giriş
+        googleSignupBtn.addEventListener('click', async () => {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await window.auth.signInWithPopup(provider);
+                const user = result.user;
+                
+                // Kullanıcı bilgilerini Firestore'a kaydet (eğer yoksa)
+                const userDoc = await window.db.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) {
+                    await window.db.collection('users').doc(user.uid).set({
+                        name: user.displayName || 'Kullanıcı',
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        favorites: []
+                    });
+                }
+                
+                showMessage('Google ile giriş başarılı! Yönlendiriliyorsun...', 'success');
+                setTimeout(() => window.location.href = '/', 1000);
+            } catch (error) {
+                console.error('Google Auth Error:', error);
+                let errorMsg = 'Google ile giriş başarısız!';
+                
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMsg = 'Giriş iptal edildi.';
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMsg = 'Pop-up engellenmiş. Lütfen pop-up\'lara izin verin.';
+                } else if (error.code === 'auth/operation-not-allowed') {
+                    errorMsg = 'Google provider aktif değil. Firebase Console\'da aktif et.';
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    errorMsg = 'Bu domain için Google auth izni yok.';
+                } else {
+                    errorMsg = `Google ile giriş hatası: ${error.message}`;
+                }
+                
+                showMessage(errorMsg, 'error');
+            }
+        });
+        
+        // Form submit
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            const name = nameInput.value;
+            
+            message.style.display = 'none';
+            
+            const submitBtn = signupForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Kaydediliyor...';
+            
+            try {
+                if (!window.auth) {
+                    showMessage('Sistem hatası! Sayfayı yenileyin.', 'error');
+                    return;
+                }
+                
+                // Kayıt
+                const userCredential = await window.auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Kullanıcı bilgilerini Firestore'a kaydet
+                await window.db.collection('users').doc(user.uid).set({
+                    name: name || 'Kullanıcı',
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    favorites: []
+                });
+                
+                showMessage('Kayıt başarılı! Yönlendiriliyorsun...', 'success');
+                setTimeout(() => window.location.href = '/', 1000);
+            } catch (error) {
+                let errorMsg = 'Bir hata oluştu!';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMsg = 'Bu e-posta adresi zaten kullanılıyor!';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg = 'Geçersiz e-posta adresi!';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMsg = 'Şifre en az 6 karakter olmalı!';
+                }
+                
+                showMessage(errorMsg, 'error');
+            }
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Kayıt Ol';
+        });
+        
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = 'message ' + type;
+        }
+    </script>
+</body>
+</html>
+
+

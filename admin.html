@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - justlook</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="6" width="12" height="12" stroke="currentColor" stroke-width="1"/>
+                </svg>
+                <span>justlook admin</span>
+            </div>
+            <button class="btn-logout" id="logoutBtn">Çıkış</button>
+        </header>
+
+        <!-- Giriş Ekranı -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-box">
+                <h2>Admin Girişi</h2>
+                <input type="email" id="emailInput" placeholder="Email" />
+                <input type="password" id="passwordInput" placeholder="Şifre" />
+                <button id="loginBtn" class="btn-primary">Giriş Yap</button>
+                <p class="login-message" id="loginMessage"></p>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <main id="adminPanel" style="display: none;">
+            <div class="panel-header">
+                <h1>Ürün Yönetimi</h1>
+                <button class="btn-primary" id="addProductBtn">+ Yeni Ürün</button>
+            </div>
+
+            <!-- Ürün Listesi -->
+            <div class="products-list" id="productsList">
+                <div class="loading">Yükleniyor...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Ürün Ekleme/Düzenleme Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Yeni Ürün</h2>
+                <button class="close-modal" id="closeModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="productName" placeholder="Ürün Adı" />
+                <input type="text" id="productBrand" placeholder="Marka" />
+                <input type="text" id="productCategory" placeholder="Kategori" />
+                <input type="text" id="productPrice" placeholder="Fiyat (örn: €199)" />
+                <input type="file" id="productImage" accept="image/*" />
+                <div class="image-preview" id="imagePreview"></div>
+                <button class="btn-primary" id="saveProductBtn">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <script src="firebase-config.js"></script>
+    <script src="admin-script.js"></script>
+</body>
+</html>
+
+

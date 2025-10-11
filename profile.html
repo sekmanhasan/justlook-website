@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilim - justlook</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="profile-style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">
+                <div class="logo-animation">
+                    <svg class="logo-circles" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="circle-1" cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1"/>
+                        <circle class="circle-2" cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1"/>
+                    </svg>
+                    <svg class="logo-square" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="6" width="12" height="12" stroke="currentColor" stroke-width="1"/>
+                    </svg>
+                </div>
+                <span>justlook</span>
+            </a>
+            <nav class="header-icons">
+                <a href="/" class="icon-btn">Ana Sayfa</a>
+                <button class="btn-logout" id="logoutBtn">Çıkış</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <svg width="48" height="48" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1"/>
+                    <path d="M4 17C4 14 6.5 12 10 12C13.5 12 16 14 16 17" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h1 id="userName">Yükleniyor...</h1>
+            <p id="userEmail"></p>
+        </div>
+
+        <div class="profile-content">
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>Favori Ürünlerim</h2>
+                    <button class="btn-share" id="shareFavoritesBtn">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 7C16.66 7 18 5.66 18 4C18 2.34 16.66 1 15 1C13.34 1 12 2.34 12 4C12 4.22 12.03 4.43 12.07 4.64L7.69 7.18C7.14 6.45 6.28 6 5.33 6C3.67 6 2.33 7.34 2.33 9C2.33 10.66 3.67 12 5.33 12C6.28 12 7.14 11.55 7.69 10.82L12.07 13.36C12.03 13.57 12 13.78 12 14C12 15.66 13.34 17 15 17C16.66 17 18 15.66 18 14C18 12.34 16.66 11 15 11C14.05 11 13.19 11.45 12.64 12.18L8.26 9.64C8.3 9.43 8.33 9.22 8.33 9C8.33 8.78 8.3 8.57 8.26 8.36L12.64 5.82C13.19 6.55 14.05 7 15 7Z" stroke="currentColor" stroke-width="1.2"/>
+                        </svg>
+                        Favorileri Paylaş
+                    </button>
+                </div>
+                <div class="favorites-grid" id="favoritesGrid">
+                    <div class="loading">Favoriler yükleniyor...</div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h2>Profil Bilgileri</h2>
+                <div class="profile-info">
+                    <div class="info-row">
+                        <label>İsim:</label>
+                        <input type="text" id="editName" placeholder="İsminiz">
+                    </div>
+                    <button class="btn-save" id="saveProfileBtn">Bilgileri Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Favorilerimi Paylaş</h3>
+                <button class="close-modal" id="closeShareModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 16px; color: #666; font-size: 14px;">Bu linki paylaş, herkes favorilerini görebilsin!</p>
+                <div class="share-link-box">
+                    <input type="text" id="shareLink" readonly>
+                    <button class="btn-copy" id="copyLinkBtn">Kopyala</button>
+                </div>
+                <div class="share-buttons">
+                    <button class="share-btn whatsapp" id="shareWhatsApp">
+                        <span>WhatsApp</span>
+                    </button>
+                    <button class="share-btn twitter" id="shareTwitter">
+                        <span>Twitter</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="profile-script.js"></script>
+</body>
+</html>
+
+
