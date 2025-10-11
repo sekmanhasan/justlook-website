@@ -114,10 +114,48 @@ function setupEventListeners() {
         });
     }
     
+    // Google Login
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    if (googleLoginBtn) {
+        debugLog('✅ Google login butonu bulundu');
+        googleLoginBtn.addEventListener('click', async () => {
+            debugLog('🔄 Google ile giriş başlatılıyor...');
+            
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await window.auth.signInWithPopup(provider);
+                const user = result.user;
+                
+                debugLog(`👤 Google ile giriş başarılı: ${user.email}`);
+                
+                // Kullanıcı bilgilerini Firestore'a kaydet (eğer yoksa)
+                const userDoc = await window.db.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) {
+                    await window.db.collection('users').doc(user.uid).set({
+                        name: user.displayName || 'Admin',
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        isAdmin: true,
+                        favorites: []
+                    });
+                    debugLog('✅ Admin kullanıcısı oluşturuldu');
+                }
+                
+            } catch (error) {
+                debugLog(`❌ Google Auth Hatası: ${error.message}`);
+                if (loginMessage) {
+                    loginMessage.textContent = 'Google ile giriş başarısız: ' + error.message;
+                    loginMessage.style.color = '#e74c3c';
+                }
+            }
+        });
+    }
+    
     // Logout
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            console.log('🚪 Logout butonu tıklandı');
+            debugLog('🚪 Logout butonu tıklandı');
             window.auth.signOut();
         });
     }
@@ -189,32 +227,39 @@ function setupEventListeners() {
                 
                 const imageUrls = [];
                 
-                debugLog('📤 Fotoğraflar yükleniyor...');
-                // Upload all images
+                debugLog('📤 Fotoğraflar Cloudinary\'ye yükleniyor...');
+                // Upload all images to Cloudinary
                 for (let i = 0; i < selectedFiles.length; i++) {
                     const file = selectedFiles[i];
                     debugLog(`📷 Fotoğraf ${i + 1}/${selectedFiles.length} yükleniyor: ${file.name}`);
                     
                     try {
-                        debugLog('🔄 Storage referansı oluşturuluyor...');
-                        const storageRef = window.storage.ref();
-                        const imageRef = storageRef.child(`products/${Date.now()}_${i}_${file.name}`);
-                        debugLog('✅ Storage referansı oluşturuldu');
+                        debugLog('🔄 Cloudinary\'ye yükleniyor...');
                         
-                        debugLog('📤 Fotoğraf yükleniyor...');
-                        await imageRef.put(file);
-                        debugLog('✅ Fotoğraf yüklendi, URL alınıyor...');
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        formData.append('upload_preset', window.cloudinaryConfig.uploadPreset);
+                        formData.append('folder', 'justlook/products');
                         
-                        const url = await imageRef.getDownloadURL();
-                        debugLog('✅ URL alındı');
+                        const response = await fetch(`https://api.cloudinary.com/v1_1/${window.cloudinaryConfig.cloudName}/image/upload`, {
+                            method: 'POST',
+                            body: formData
+                        });
                         
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        const url = data.secure_url;
+                        
+                        debugLog('✅ Cloudinary yükleme başarılı');
                         imageUrls.push(url);
                         debugLog(`✅ Fotoğraf ${i + 1} tamamlandı: ${url.substring(0, 50)}...`);
                         saveProductBtn.textContent = `Yükleniyor... (${i + 1}/${selectedFiles.length})`;
                         
                     } catch (uploadError) {
-                        debugLog(`❌ Fotoğraf yükleme hatası: ${uploadError.message}`);
-                        debugLog(`❌ Hata kodu: ${uploadError.code}`);
+                        debugLog(`❌ Cloudinary yükleme hatası: ${uploadError.message}`);
                         throw uploadError;
                     }
                 }

@@ -8,6 +8,15 @@ const firebaseConfig = {
     appId: "1:1095374100433:web:1131004145f2261e67f2f0"
 };
 
+// Cloudinary Configuration
+const cloudinaryConfig = {
+    cloudName: 'dfdrdbmjc', // Cloudinary dashboard'dan al
+    uploadPreset: 'justlook_products' // Upload preset adı
+};
+
+// Global değişkenleri window'a ata
+window.cloudinaryConfig = cloudinaryConfig;
+
 // Firebase'i başlat
 let db, storage, auth;
 
