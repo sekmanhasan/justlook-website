@@ -69,14 +69,32 @@
 
         <!-- Admin Panel -->
         <main id="adminPanel" style="display: none;">
-            <div class="panel-header">
-                <h1>Ürün Yönetimi</h1>
-                <button class="btn-primary" id="addProductBtn">+ Yeni Ürün</button>
+            <!-- Tab Navigation -->
+            <div class="admin-tabs">
+                <button class="tab-btn active" id="productsTab">Ürünler</button>
+                <button class="tab-btn" id="categoriesTab">Kategoriler</button>
             </div>
 
-            <!-- Ürün Listesi -->
-            <div class="products-list" id="productsList">
-                <div class="loading">Yükleniyor...</div>
+            <!-- Products Tab -->
+            <div id="productsSection" class="tab-content active">
+                <div class="panel-header">
+                    <h1>Ürün Yönetimi</h1>
+                    <button class="btn-primary" id="addProductBtn">+ Yeni Ürün</button>
+                </div>
+                <div class="products-list" id="productsList">
+                    <div class="loading">Yükleniyor...</div>
+                </div>
+            </div>
+
+            <!-- Categories Tab -->
+            <div id="categoriesSection" class="tab-content">
+                <div class="panel-header">
+                    <h1>Kategori Yönetimi</h1>
+                    <button class="btn-primary" id="addCategoryBtn">+ Yeni Kategori</button>
+                </div>
+                <div class="categories-list" id="categoriesList">
+                    <div class="loading">Yükleniyor...</div>
+                </div>
             </div>
         </main>
     </div>
@@ -91,11 +109,28 @@
             <div class="modal-body">
                 <input type="text" id="productName" placeholder="Ürün Adı" />
                 <input type="text" id="productBrand" placeholder="Marka" />
-                <input type="text" id="productCategory" placeholder="Kategori" />
+                <select id="productCategory" placeholder="Kategori">
+                    <option value="">Kategori Seçin...</option>
+                </select>
                 <input type="text" id="productPrice" placeholder="Fiyat (örn: €199)" />
                 <input type="file" id="productImages" accept="image/*" multiple />
                 <div class="image-preview" id="imagePreview"></div>
                 <button class="btn-primary" id="saveProductBtn">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kategori Ekleme/Düzenleme Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="categoryModalTitle">Yeni Kategori</h2>
+                <button class="close-modal" id="closeCategoryModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="categoryName" placeholder="Kategori Adı" />
+                <textarea id="categoryDescription" placeholder="Kategori Açıklaması (opsiyonel)"></textarea>
+                <button class="btn-primary" id="saveCategoryBtn">Kaydet</button>
             </div>
         </div>
     </div>
