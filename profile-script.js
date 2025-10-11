@@ -1,6 +1,20 @@
 // Profile Script
 initFirebase();
 
+// Ana sayfa butonu için debug
+document.addEventListener('DOMContentLoaded', () => {
+    const homeBtn = document.querySelector('.icon-btn');
+    if (homeBtn) {
+        console.log('🏠 Ana sayfa butonu bulundu:', homeBtn);
+        homeBtn.addEventListener('click', (e) => {
+            console.log('🏠 Ana sayfa butonuna tıklandı');
+            console.log('🔗 Link:', homeBtn.href);
+        });
+    } else {
+        console.log('❌ Ana sayfa butonu bulunamadı');
+    }
+});
+
 let currentUser = null;
 
 // DOM Elements
@@ -116,13 +130,15 @@ saveProfileBtn.addEventListener('click', async () => {
 
 // Logout
 logoutBtn.addEventListener('click', async () => {
+    console.log('🚪 Logout butonu tıklandı');
     if (confirm('Çıkış yapmak istediğine emin misin?')) {
         try {
+            console.log('🔄 Çıkış yapılıyor...');
             await window.auth.signOut();
             console.log('✅ Çıkış yapıldı');
             window.location.href = 'login.html';
         } catch (error) {
-            console.error('Çıkış hatası:', error);
+            console.error('❌ Çıkış hatası:', error);
             alert('Çıkış yapılırken hata oluştu!');
         }
     }
