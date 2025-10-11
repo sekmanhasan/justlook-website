@@ -211,10 +211,15 @@ function updateImagesPreview() {
 
 // Save Product
 saveProductBtn.addEventListener('click', async () => {
+    console.log('💾 Kaydet butonuna tıklandı');
+    
     const name = document.getElementById('productName').value;
     const brand = document.getElementById('productBrand').value;
     const category = document.getElementById('productCategory').value;
     const price = document.getElementById('productPrice').value;
+    
+    console.log('📝 Form verileri:', { name, brand, category, price });
+    console.log('📁 Seçili dosyalar:', selectedFiles.length);
     
     if (!name || !brand || !category || !price) {
         alert('Lütfen tüm alanları doldurun!');
@@ -226,24 +231,40 @@ saveProductBtn.addEventListener('click', async () => {
         return;
     }
     
+    console.log('✅ Form validasyonu geçti');
+    
     saveProductBtn.textContent = `Yükleniyor... (0/${selectedFiles.length})`;
     saveProductBtn.disabled = true;
     
     try {
+        console.log('🔄 Firebase servisleri kontrol ediliyor...');
+        console.log('🔍 window.storage:', typeof window.storage);
+        console.log('🔍 window.db:', typeof window.db);
+        
+        if (!window.storage || !window.db) {
+            alert('Firebase servisleri yüklenemedi! Sayfayı yenileyin.');
+            return;
+        }
+        
         const imageUrls = [];
         
+        console.log('📤 Fotoğraflar yükleniyor...');
         // Upload all images
         for (let i = 0; i < selectedFiles.length; i++) {
             const file = selectedFiles[i];
+            console.log(`📷 Fotoğraf ${i + 1}/${selectedFiles.length} yükleniyor:`, file.name);
+            
             const storageRef = window.storage.ref();
             const imageRef = storageRef.child(`products/${Date.now()}_${i}_${file.name}`);
             await imageRef.put(file);
             const url = await imageRef.getDownloadURL();
             imageUrls.push(url);
             
+            console.log(`✅ Fotoğraf ${i + 1} yüklendi:`, url);
             saveProductBtn.textContent = `Yükleniyor... (${i + 1}/${selectedFiles.length})`;
         }
         
+        console.log('💾 Ürün verisi oluşturuluyor...');
         const productData = {
             name,
             brand,
@@ -254,24 +275,32 @@ saveProductBtn.addEventListener('click', async () => {
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         
+        console.log('📦 Ürün verisi:', productData);
+        
         if (currentEditingId) {
             // Update
+            console.log('🔄 Ürün güncelleniyor...');
             await window.db.collection('products').doc(currentEditingId).update(productData);
+            console.log('✅ Ürün güncellendi');
         } else {
             // Create
+            console.log('➕ Yeni ürün oluşturuluyor...');
             productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             await window.db.collection('products').add(productData);
+            console.log('✅ Yeni ürün oluşturuldu');
         }
         
         productModal.classList.remove('active');
         selectedFiles = [];
         loadProducts();
     } catch (error) {
+        console.error('❌ Ürün kaydetme hatası:', error);
         alert('Hata: ' + error.message);
+    } finally {
+        saveProductBtn.disabled = false;
+        saveProductBtn.textContent = 'Kaydet';
+        console.log('🔄 Buton tekrar aktif edildi');
     }
-    
-    saveProductBtn.textContent = 'Kaydet';
-    saveProductBtn.disabled = false;
 });
 
 // Load Products
