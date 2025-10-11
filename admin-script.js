@@ -120,12 +120,20 @@ function setupEventListeners() {
     
     // Yeni Ürün Modal'ını Aç
     if (addProductBtn) {
+        console.log('✅ addProductBtn bulundu, event listener ekleniyor');
         addProductBtn.addEventListener('click', () => {
             console.log('➕ Yeni ürün butonu tıklandı');
             currentEditingId = null;
             clearProductForm();
-            productModal.classList.add('active');
+            if (productModal) {
+                productModal.classList.add('active');
+                console.log('✅ Modal açıldı');
+            } else {
+                console.error('❌ productModal bulunamadı');
+            }
         });
+    } else {
+        console.error('❌ addProductBtn bulunamadı!');
     }
     
     // Modal'ı Kapat
@@ -351,7 +359,8 @@ function clearProductForm() {
     document.getElementById('productCategory').value = '';
     document.getElementById('productPrice').value = '';
     document.getElementById('productImages').value = '';
-    document.getElementById('imagePreview').innerHTML = '';
+    const preview = document.getElementById('imagePreview');
+    if (preview) preview.innerHTML = '';
     selectedFiles = [];
 }
 
