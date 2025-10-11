@@ -20,8 +20,6 @@ let currentUser = null;
 // DOM Elements
 const userName = document.getElementById('userName');
 const userEmail = document.getElementById('userEmail');
-const editName = document.getElementById('editName');
-const saveProfileBtn = document.getElementById('saveProfileBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const favoritesGrid = document.getElementById('favoritesGrid');
 const shareFavoritesBtn = document.getElementById('shareFavoritesBtn');
@@ -31,6 +29,10 @@ const shareLink = document.getElementById('shareLink');
 const copyLinkBtn = document.getElementById('copyLinkBtn');
 const shareWhatsApp = document.getElementById('shareWhatsApp');
 const shareTwitter = document.getElementById('shareTwitter');
+
+// Debug: DOM elements kontrolü
+console.log('🔍 DOM Elements Debug:');
+console.log('logoutBtn:', logoutBtn);
 
 // Auth State
 window.auth.onAuthStateChanged(async (user) => {
@@ -48,7 +50,6 @@ window.auth.onAuthStateChanged(async (user) => {
         if (userDoc.exists) {
             const userData = userDoc.data();
             userName.textContent = userData.name || 'Kullanıcı';
-            editName.value = userData.name || '';
             
             // Load favorites
             if (userData.favorites && userData.favorites.length > 0) {
@@ -101,48 +102,34 @@ async function loadFavorites(favoritesList) {
     }
 }
 
-// Save Profile
-saveProfileBtn.addEventListener('click', async () => {
-    const name = editName.value.trim();
-    
-    if (!name) {
-        alert('Lütfen isminizi girin!');
-        return;
-    }
-    
-    saveProfileBtn.textContent = 'Kaydediliyor...';
-    saveProfileBtn.disabled = true;
-    
-    try {
-        await window.db.collection('users').doc(currentUser.uid).update({
-            name: name
-        });
-        
-        userName.textContent = name;
-        alert('Profil güncellendi!');
-    } catch (error) {
-        alert('Hata: ' + error.message);
-    }
-    
-    saveProfileBtn.textContent = 'Bilgileri Güncelle';
-    saveProfileBtn.disabled = false;
-});
 
-// Logout
-logoutBtn.addEventListener('click', async () => {
-    console.log('🚪 Logout butonu tıklandı');
-    if (confirm('Çıkış yapmak istediğine emin misin?')) {
-        try {
-            console.log('🔄 Çıkış yapılıyor...');
-            await window.auth.signOut();
-            console.log('✅ Çıkış yapıldı');
-            window.location.href = 'login.html';
-        } catch (error) {
-            console.error('❌ Çıkış hatası:', error);
-            alert('Çıkış yapılırken hata oluştu!');
+// Logout - DOM yüklendikten sonra ekle
+if (logoutBtn) {
+    console.log('✅ Logout butonu bulundu, event listener ekleniyor');
+    logoutBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        console.log('🚪 Logout butonu tıklandı');
+        
+        if (confirm('Çıkış yapmak istediğine emin misin?')) {
+            try {
+                console.log('🔄 Çıkış yapılıyor...');
+                if (window.auth) {
+                    await window.auth.signOut();
+                    console.log('✅ Çıkış yapıldı');
+                    window.location.href = 'login.html';
+                } else {
+                    console.error('❌ window.auth bulunamadı');
+                    alert('Sistem hatası! Sayfayı yenileyin.');
+                }
+            } catch (error) {
+                console.error('❌ Çıkış hatası:', error);
+                alert('Çıkış yapılırken hata oluştu!');
+            }
         }
-    }
-});
+    });
+} else {
+    console.error('❌ Logout butonu bulunamadı!');
+}
 
 // Share Favorites
 shareFavoritesBtn.addEventListener('click', () => {
