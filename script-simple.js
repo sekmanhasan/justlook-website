@@ -390,6 +390,23 @@ document.addEventListener('DOMContentLoaded', function() {
         filterPanel.querySelector('.apply-filter-btn').addEventListener('click', () => {
             applyFilters();
             filterPanel.classList.remove('active');
+            setTimeout(() => {
+                if (filterPanel.parentNode) {
+                    filterPanel.parentNode.removeChild(filterPanel);
+                }
+            }, 300);
+        });
+        
+        // Dışarıya tıklayınca kapat
+        filterPanel.addEventListener('click', (e) => {
+            if (e.target === filterPanel) {
+                filterPanel.classList.remove('active');
+                setTimeout(() => {
+                    if (filterPanel.parentNode) {
+                        filterPanel.parentNode.removeChild(filterPanel);
+                    }
+                }, 300);
+            }
         });
     }
     
