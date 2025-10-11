@@ -1,16 +1,26 @@
 // Profile Script
-initFirebase();
-
-// Ana sayfa butonu için JavaScript yönlendirme
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Profile script yükleniyor...');
+    
+    // Firebase'i başlat
+    if (typeof initFirebase !== 'undefined') {
+        initFirebase();
+    }
+    
+    // Ana sayfa butonu için JavaScript yönlendirme
     const homeBtn = document.getElementById('homeBtn');
     const logoBtn = document.getElementById('logoBtn');
     
+    console.log('🔍 Butonlar kontrol ediliyor...');
+    console.log('homeBtn:', homeBtn);
+    console.log('logoBtn:', logoBtn);
+    
     if (homeBtn) {
-        console.log('🏠 Ana sayfa butonu bulundu:', homeBtn);
+        console.log('✅ Ana sayfa butonu bulundu, event listener ekleniyor');
         homeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('🏠 Ana sayfa butonuna tıklandı');
+            console.log('🔄 Yönlendiriliyor:', window.location.origin + '/');
             window.location.href = window.location.origin + '/';
         });
     } else {
@@ -18,10 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     if (logoBtn) {
-        console.log('🏠 Logo butonu bulundu:', logoBtn);
+        console.log('✅ Logo butonu bulundu, event listener ekleniyor');
         logoBtn.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('🏠 Logo butonuna tıklandı');
+            console.log('🔄 Yönlendiriliyor:', window.location.origin + '/');
             window.location.href = window.location.origin + '/';
         });
     } else {
@@ -117,66 +128,103 @@ async function loadFavorites(favoritesList) {
 }
 
 
-// Logout - DOM yüklendikten sonra ekle
-if (logoutBtn) {
-    console.log('✅ Logout butonu bulundu, event listener ekleniyor');
-    logoutBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        console.log('🚪 Logout butonu tıklandı');
-        
-        if (confirm('Çıkış yapmak istediğine emin misin?')) {
-            try {
-                console.log('🔄 Çıkış yapılıyor...');
-                if (window.auth) {
-                    await window.auth.signOut();
-                    console.log('✅ Çıkış yapıldı');
-                    window.location.href = 'login.html';
-                } else {
-                    console.error('❌ window.auth bulunamadı');
-                    alert('Sistem hatası! Sayfayı yenileyin.');
+    // Logout butonu event listener'ı
+    const logoutBtn = document.getElementById('logoutBtn');
+    console.log('logoutBtn:', logoutBtn);
+    
+    if (logoutBtn) {
+        console.log('✅ Logout butonu bulundu, event listener ekleniyor');
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            console.log('🚪 Logout butonu tıklandı');
+            
+            if (confirm('Çıkış yapmak istediğine emin misin?')) {
+                try {
+                    console.log('🔄 Çıkış yapılıyor...');
+                    if (window.auth) {
+                        await window.auth.signOut();
+                        console.log('✅ Çıkış yapıldı');
+                        window.location.href = window.location.origin + '/login.html';
+                    } else {
+                        console.error('❌ window.auth bulunamadı');
+                        alert('Sistem hatası! Sayfayı yenileyin.');
+                    }
+                } catch (error) {
+                    console.error('❌ Çıkış hatası:', error);
+                    alert('Çıkış yapılırken hata oluştu!');
                 }
-            } catch (error) {
-                console.error('❌ Çıkış hatası:', error);
-                alert('Çıkış yapılırken hata oluştu!');
             }
-        }
-    });
-} else {
-    console.error('❌ Logout butonu bulunamadı!');
-}
-
-// Share Favorites
-shareFavoritesBtn.addEventListener('click', () => {
-    const link = `${window.location.origin}/favorites.html?user=${currentUser.uid}`;
-    shareLink.value = link;
-    shareModal.classList.add('active');
+        });
+    } else {
+        console.error('❌ Logout butonu bulunamadı!');
+    }
 });
 
-closeShareModal.addEventListener('click', () => {
-    shareModal.classList.remove('active');
-});
+    // Share Favorites
+    const shareFavoritesBtn = document.getElementById('shareFavoritesBtn');
+    const shareModal = document.getElementById('shareModal');
+    const closeShareModal = document.getElementById('closeShareModal');
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    const shareLink = document.getElementById('shareLink');
+    
+    if (shareFavoritesBtn && shareModal && shareLink) {
+        shareFavoritesBtn.addEventListener('click', () => {
+            const link = `${window.location.origin}/favorites.html?user=${currentUser.uid}`;
+            shareLink.value = link;
+            shareModal.classList.add('active');
+        });
+    }
+    
+    if (closeShareModal) {
+        closeShareModal.addEventListener('click', () => {
+            shareModal.classList.remove('active');
+        });
+    }
+    
+    if (copyLinkBtn && shareLink) {
+        copyLinkBtn.addEventListener('click', () => {
+            shareLink.select();
+            document.execCommand('copy');
+            copyLinkBtn.textContent = 'Kopyalandı!';
+            setTimeout(() => {
+                copyLinkBtn.textContent = 'Kopyala';
+            }, 2000);
+        });
+    }
 
-// Copy Link
-copyLinkBtn.addEventListener('click', () => {
-    shareLink.select();
-    document.execCommand('copy');
-    copyLinkBtn.textContent = 'Kopyalandı!';
-    setTimeout(() => {
-        copyLinkBtn.textContent = 'Kopyala';
-    }, 2000);
-});
+    // Share to WhatsApp
+    const shareWhatsApp = document.getElementById('shareWhatsApp');
+    if (shareWhatsApp && shareLink) {
+        shareWhatsApp.addEventListener('click', () => {
+            const link = shareLink.value;
+            const text = `Justlook'ta favorilerime göz at! ${link}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        });
+    }
 
-// Share to WhatsApp
-shareWhatsApp.addEventListener('click', () => {
-    const link = shareLink.value;
-    const text = `Justlook'ta favorilerime göz at! ${link}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-});
+    // Share to Twitter
+    const shareTwitter = document.getElementById('shareTwitter');
+    if (shareTwitter && shareLink) {
+        shareTwitter.addEventListener('click', () => {
+            const link = shareLink.value;
+            const text = `Justlook'ta favorilerime göz atın!`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`, '_blank');
+        });
+    }
 
-// Share to Twitter
-shareTwitter.addEventListener('click', () => {
-    const link = shareLink.value;
-    const text = `Justlook'ta favorilerime göz atın!`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`, '_blank');
+    // Auth State
+    if (window.auth) {
+        window.auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                console.log('👤 Kullanıcı giriş yaptı:', user.email);
+                currentUser = user;
+                await loadUserProfile();
+                await loadFavorites();
+            } else {
+                console.log('👤 Kullanıcı çıkış yaptı');
+                window.location.href = window.location.origin + '/login.html';
+            }
+        });
+    }
 });
 
