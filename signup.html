@@ -173,6 +173,64 @@
         .btn-google svg {
             flex-shrink: 0;
         }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 20px;
+            }
+            
+            .login-box {
+                padding: 30px 24px;
+                max-width: 100%;
+            }
+            
+            .login-header h2 {
+                font-size: 20px;
+            }
+            
+            .input-group input {
+                padding: 12px 14px;
+                font-size: 16px; /* iOS zoom önleme */
+            }
+            
+            .btn-login, .btn-google {
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 16px;
+            }
+            
+            .login-box {
+                padding: 24px 20px;
+            }
+            
+            .login-header h2 {
+                font-size: 18px;
+            }
+            
+            .input-group input {
+                padding: 12px;
+            }
+            
+            .btn-login, .btn-google {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .divider {
+                margin: 16px 0;
+            }
+            
+            .toggle-mode {
+                margin-top: 16px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
