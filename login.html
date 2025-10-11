@@ -421,7 +421,7 @@
                 } else if (error.code === 'auth/operation-not-allowed') {
                     errorMsg = 'Google provider aktif değil. Firebase Console\'da aktif et.';
                 } else if (error.code === 'auth/unauthorized-domain') {
-                    errorMsg = 'Bu domain için Google auth izni yok.';
+                    errorMsg = 'Bu domain için Google auth izni yok. Firebase Console > Authentication > Settings > Authorized domains\'e "sekmanhasan.github.io" ekle.';
                 } else {
                     errorMsg = `Google ile giriş hatası: ${error.message}`;
                 }

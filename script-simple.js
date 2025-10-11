@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     filterPanel.parentNode.removeChild(filterPanel);
                     filterPanel = null; // Reset filterPanel variable
                 }
-            }, 300);
+            }, 350);
         });
         
         filterPanel.querySelector('.apply-filter-btn').addEventListener('click', () => {
@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     filterPanel.parentNode.removeChild(filterPanel);
                     filterPanel = null; // Reset filterPanel variable
                 }
-            }, 300);
+            }, 350);
         });
         
         // Dışarıya tıklayınca kapat
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         filterPanel.parentNode.removeChild(filterPanel);
                         filterPanel = null; // Reset filterPanel variable
                     }
-                }, 300);
+                }, 350);
             }
         });
     }
