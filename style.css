@@ -1544,6 +1544,7 @@ main.search-open {
         gap: 4px;
         display: flex !important;
         align-items: center;
+        padding-right: 10px;
     }
     
     .icon-btn {

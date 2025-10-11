@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========== FILTER BUTTON ==========
     filterBtn.addEventListener('click', function() {
         console.log('✅ Filter tıklandı!');
-        if (!filterPanel) {
+        if (!filterPanel || !document.body.contains(filterPanel)) {
             createFilterPanel();
         } else {
             filterPanel.classList.toggle('active');
@@ -383,6 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 if (filterPanel.parentNode) {
                     filterPanel.parentNode.removeChild(filterPanel);
+                    filterPanel = null; // Reset filterPanel variable
                 }
             }, 300);
         });
@@ -393,6 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 if (filterPanel.parentNode) {
                     filterPanel.parentNode.removeChild(filterPanel);
+                    filterPanel = null; // Reset filterPanel variable
                 }
             }, 300);
         });
@@ -404,6 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     if (filterPanel.parentNode) {
                         filterPanel.parentNode.removeChild(filterPanel);
+                        filterPanel = null; // Reset filterPanel variable
                     }
                 }, 300);
             }
