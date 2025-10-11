@@ -218,14 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ DOM yüklendi!');
     
     // Logo yönlendirme
-    const logoBtn = document.getElementById('indexLogoBtn');
-    if (logoBtn) {
-        logoBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('🏠 Logo butonuna tıklandı');
-            window.location.href = window.location.origin + '/';
-        });
-    }
+        // HTML href artık doğru, JavaScript event listener'a gerek yok
     
     // Butonları bul
     const filterBtn = document.querySelector('[aria-label="Filter"]');

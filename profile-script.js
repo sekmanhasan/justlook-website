@@ -7,37 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initFirebase();
     }
     
-    // Ana sayfa butonu için JavaScript yönlendirme
-    const homeBtn = document.getElementById('homeBtn');
-    const logoBtn = document.getElementById('logoBtn');
-    
-    console.log('🔍 Butonlar kontrol ediliyor...');
-    console.log('homeBtn:', homeBtn);
-    console.log('logoBtn:', logoBtn);
-    
-    if (homeBtn) {
-        console.log('✅ Ana sayfa butonu bulundu, event listener ekleniyor');
-        homeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('🏠 Ana sayfa butonuna tıklandı');
-            console.log('🔄 Yönlendiriliyor:', window.location.origin + '/');
-            window.location.href = window.location.origin + '/';
-        });
-    } else {
-        console.log('❌ Ana sayfa butonu bulunamadı');
-    }
-    
-    if (logoBtn) {
-        console.log('✅ Logo butonu bulundu, event listener ekleniyor');
-        logoBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('🏠 Logo butonuna tıklandı');
-            console.log('🔄 Yönlendiriliyor:', window.location.origin + '/');
-            window.location.href = window.location.origin + '/';
-        });
-    } else {
-        console.log('❌ Logo butonu bulunamadı');
-    }
+    // HTML href'ler artık doğru, JavaScript event listener'a gerek yok
 });
 
 let currentUser = null;
@@ -144,7 +114,7 @@ async function loadFavorites(favoritesList) {
                     if (window.auth) {
                         await window.auth.signOut();
                         console.log('✅ Çıkış yapıldı');
-                        window.location.href = window.location.origin + '/login.html';
+                        window.location.href = 'login.html';
                     } else {
                         console.error('❌ window.auth bulunamadı');
                         alert('Sistem hatası! Sayfayı yenileyin.');
@@ -222,7 +192,7 @@ async function loadFavorites(favoritesList) {
                 await loadFavorites();
             } else {
                 console.log('👤 Kullanıcı çıkış yaptı');
-                window.location.href = window.location.origin + '/login.html';
+                window.location.href = 'login.html';
             }
         });
     }
