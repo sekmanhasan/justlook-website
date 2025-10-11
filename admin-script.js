@@ -195,14 +195,28 @@ function setupEventListeners() {
                     const file = selectedFiles[i];
                     debugLog(`📷 Fotoğraf ${i + 1}/${selectedFiles.length} yükleniyor: ${file.name}`);
                     
-                    const storageRef = window.storage.ref();
-                    const imageRef = storageRef.child(`products/${Date.now()}_${i}_${file.name}`);
-                    await imageRef.put(file);
-                    const url = await imageRef.getDownloadURL();
-                    imageUrls.push(url);
-                    
-                    debugLog(`✅ Fotoğraf ${i + 1} yüklendi: ${url.substring(0, 50)}...`);
-                    saveProductBtn.textContent = `Yükleniyor... (${i + 1}/${selectedFiles.length})`;
+                    try {
+                        debugLog('🔄 Storage referansı oluşturuluyor...');
+                        const storageRef = window.storage.ref();
+                        const imageRef = storageRef.child(`products/${Date.now()}_${i}_${file.name}`);
+                        debugLog('✅ Storage referansı oluşturuldu');
+                        
+                        debugLog('📤 Fotoğraf yükleniyor...');
+                        await imageRef.put(file);
+                        debugLog('✅ Fotoğraf yüklendi, URL alınıyor...');
+                        
+                        const url = await imageRef.getDownloadURL();
+                        debugLog('✅ URL alındı');
+                        
+                        imageUrls.push(url);
+                        debugLog(`✅ Fotoğraf ${i + 1} tamamlandı: ${url.substring(0, 50)}...`);
+                        saveProductBtn.textContent = `Yükleniyor... (${i + 1}/${selectedFiles.length})`;
+                        
+                    } catch (uploadError) {
+                        debugLog(`❌ Fotoğraf yükleme hatası: ${uploadError.message}`);
+                        debugLog(`❌ Hata kodu: ${uploadError.code}`);
+                        throw uploadError;
+                    }
                 }
                 
                 console.log('💾 Ürün verisi oluşturuluyor...');
