@@ -1267,6 +1267,79 @@ main.search-open {
     color: var(--text-primary);
 }
 
+/* Ek dark mode düzeltmeleri */
+[data-theme="dark"] header {
+    background: rgba(26, 26, 26, 0.95);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .products-grid {
+    background: var(--bg-primary);
+}
+
+[data-theme="dark"] .btn-primary {
+    background: var(--accent-color);
+    color: white;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent-color);
+}
+
+[data-theme="dark"] .modal {
+    background: rgba(26, 26, 26, 0.9);
+}
+
+[data-theme="dark"] .modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modal-header h2 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .close-modal {
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .close-modal:hover {
+    color: var(--text-primary);
+    background: var(--accent-color);
+}
+
+[data-theme="dark"] .modal-body input,
+[data-theme="dark"] .modal-body textarea {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modal-body input::placeholder,
+[data-theme="dark"] .modal-body textarea::placeholder {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .modal-body label {
+    color: var(--text-primary);
+}
+
 /* ========== RESPONSIVE DESIGN ========== */
 
 /* Tablet */

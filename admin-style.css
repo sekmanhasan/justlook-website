@@ -365,4 +365,160 @@ body {
     font-size: 16px;
 }
 
+/* ========== DARK MODE ========== */
+
+[data-theme="dark"] {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #3a3a3a;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --text-muted: #888888;
+    --border-color: #404040;
+    --accent-color: #6366f1;
+    --accent-hover: #5856eb;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .admin-container {
+    background: var(--bg-primary);
+}
+
+[data-theme="dark"] .admin-header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .logo {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-logout {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .btn-logout:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+[data-theme="dark"] .login-screen {
+    background: var(--bg-primary);
+}
+
+[data-theme="dark"] .login-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+[data-theme="dark"] .login-box h2 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .login-box input {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .login-box input::placeholder {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .btn-primary {
+    background: var(--accent-color);
+    color: white;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+[data-theme="dark"] .btn-google {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .btn-google:hover {
+    background: var(--bg-secondary);
+    border-color: var(--accent-color);
+}
+
+[data-theme="dark"] .login-message {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .panel-header h1 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .product-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .product-info h3 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .product-info p {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .edit-btn {
+    background: var(--accent-color);
+    color: white;
+}
+
+[data-theme="dark"] .delete-btn {
+    background: #dc2626;
+    color: white;
+}
+
+[data-theme="dark"] .modal {
+    background: rgba(26, 26, 26, 0.9);
+}
+
+[data-theme="dark"] .modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modal-header h2 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .close-modal {
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .close-modal:hover {
+    color: var(--text-primary);
+    background: var(--accent-color);
+}
+
+[data-theme="dark"] .modal-body input {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modal-body input::placeholder {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .loading {
+    color: var(--text-secondary);
+}
+
 
