@@ -1,17 +1,31 @@
 // Profile Script
 initFirebase();
 
-// Ana sayfa butonu için debug
+// Ana sayfa butonu için JavaScript yönlendirme
 document.addEventListener('DOMContentLoaded', () => {
-    const homeBtn = document.querySelector('.icon-btn');
+    const homeBtn = document.getElementById('homeBtn');
+    const logoBtn = document.getElementById('logoBtn');
+    
     if (homeBtn) {
         console.log('🏠 Ana sayfa butonu bulundu:', homeBtn);
         homeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             console.log('🏠 Ana sayfa butonuna tıklandı');
-            console.log('🔗 Link:', homeBtn.href);
+            window.location.href = window.location.origin + '/';
         });
     } else {
         console.log('❌ Ana sayfa butonu bulunamadı');
+    }
+    
+    if (logoBtn) {
+        console.log('🏠 Logo butonu bulundu:', logoBtn);
+        logoBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🏠 Logo butonuna tıklandı');
+            window.location.href = window.location.origin + '/';
+        });
+    } else {
+        console.log('❌ Logo butonu bulunamadı');
     }
 });
 

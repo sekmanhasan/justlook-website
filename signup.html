@@ -238,7 +238,7 @@
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <a href="/" class="login-logo">
+                <a href="#" class="login-logo" id="signupLogoBtn">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect x="6" y="6" width="12" height="12" stroke="currentColor" stroke-width="1"/>
                     </svg>
@@ -325,7 +325,7 @@
                 }
                 
                 showMessage('Google ile giriş başarılı! Yönlendiriliyorsun...', 'success');
-                setTimeout(() => window.location.href = '/', 1000);
+                setTimeout(() => window.location.href = window.location.origin + '/', 1000);
             } catch (error) {
                 console.error('Google Auth Error:', error);
                 let errorMsg = 'Google ile giriş başarısız!';
@@ -379,7 +379,7 @@
                 });
                 
                 showMessage('Kayıt başarılı! Yönlendiriliyorsun...', 'success');
-                setTimeout(() => window.location.href = '/', 1000);
+                setTimeout(() => window.location.href = window.location.origin + '/', 1000);
             } catch (error) {
                 let errorMsg = 'Bir hata oluştu!';
                 
@@ -402,6 +402,18 @@
             message.textContent = text;
             message.className = 'message ' + type;
         }
+        
+        // Logo yönlendirme
+        document.addEventListener('DOMContentLoaded', () => {
+            const logoBtn = document.getElementById('signupLogoBtn');
+            if (logoBtn) {
+                logoBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('🏠 Logo butonuna tıklandı');
+                    window.location.href = window.location.origin + '/';
+                });
+            }
+        });
     </script>
 </body>
 </html>
