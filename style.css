@@ -1340,6 +1340,42 @@ main.search-open {
     color: var(--text-primary);
 }
 
+/* Dark mode'da siyah kalan yazıları düzelt */
+[data-theme="dark"] * {
+    color: inherit;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div,
+[data-theme="dark"] a {
+    color: inherit;
+}
+
+[data-theme="dark"] .product-info *,
+[data-theme="dark"] .product-actions *,
+[data-theme="dark"] .filter-group *,
+[data-theme="dark"] .dropdown-item * {
+    color: inherit;
+}
+
+[data-theme="dark"] .brand {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .price {
+    color: var(--accent-color) !important;
+}
+
 /* ========== RESPONSIVE DESIGN ========== */
 
 /* Tablet */
@@ -1507,6 +1543,24 @@ main.search-open {
         height: 32px;
     }
     
+    /* User menu mobilde düzelt */
+    .user-menu {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+    }
+    
+    .user-btn {
+        padding: 6px;
+        font-size: 12px;
+    }
+    
+    .user-dropdown {
+        right: 0;
+        left: auto;
+        min-width: 150px;
+    }
+    
     .icon-btn svg {
         width: 14px;
         height: 14px;
@@ -1663,5 +1717,14 @@ main.search-open {
         width: 100%;
         margin: 0;
         padding: 12px;
+        right: -100% !important;
+        left: 0 !important;
+        top: 0 !important;
+        height: 100vh !important;
+    }
+    
+    .filter-panel.active,
+    .search-panel.active {
+        right: 0 !important;
     }
 }
