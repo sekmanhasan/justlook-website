@@ -133,15 +133,16 @@ body {
 
 /* Admin Panel */
 #adminPanel {
-    padding: 40px;
+    padding: 0;
 }
 
 /* Admin Tabs */
 .admin-tabs {
     display: flex;
     gap: 0;
-    margin-bottom: 32px;
+    padding: 0 40px;
     border-bottom: 1px solid #e5e5e5;
+    background: #ffffff;
 }
 
 .tab-btn {
@@ -167,6 +168,7 @@ body {
 
 .tab-content {
     display: none;
+    padding: 40px;
 }
 
 .tab-content.active {
@@ -247,16 +249,46 @@ body {
     padding: 20px;
     border: 1px solid #e5e5e5;
     transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .product-item:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+.product-images {
+    width: 100%;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.product-images img {
+    width: 100%;
+    max-width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+    flex-shrink: 0;
+}
+
+.product-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .product-item h3 {
     font-size: 18px;
     font-weight: 400;
     margin-bottom: 8px;
+    color: #000;
 }
 
 .product-item p {
@@ -459,198 +491,5 @@ body {
     font-size: 16px;
 }
 
-/* ========== DARK MODE ========== */
-
-[data-theme="dark"] {
-    --bg-primary: #1a1a1a;
-    --bg-secondary: #2d2d2d;
-    --bg-tertiary: #3a3a3a;
-    --text-primary: #ffffff;
-    --text-secondary: #b3b3b3;
-    --text-muted: #888888;
-    --border-color: #404040;
-    --accent-color: #6366f1;
-    --accent-hover: #5856eb;
-    --shadow-color: rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] body {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .admin-container {
-    background: var(--bg-primary);
-}
-
-[data-theme="dark"] .admin-header {
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .logo {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .btn-logout {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .btn-logout:hover {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
-[data-theme="dark"] .login-screen {
-    background: var(--bg-primary);
-}
-
-[data-theme="dark"] .login-box {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 30px var(--shadow-color);
-}
-
-[data-theme="dark"] .login-box h2 {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .login-box input {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .login-box input::placeholder {
-    color: var(--text-muted);
-}
-
-[data-theme="dark"] .btn-primary {
-    background: var(--accent-color);
-    color: white;
-}
-
-[data-theme="dark"] .btn-primary:hover {
-    background: var(--accent-hover);
-}
-
-[data-theme="dark"] .btn-google {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .btn-google:hover {
-    background: var(--bg-secondary);
-    border-color: var(--accent-color);
-}
-
-[data-theme="dark"] .login-message {
-    color: var(--text-secondary);
-}
-
-[data-theme="dark"] .panel-header h1 {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .product-item {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .product-info h3 {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .product-info p {
-    color: var(--text-secondary);
-}
-
-[data-theme="dark"] .edit-btn {
-    background: var(--accent-color);
-    color: white;
-}
-
-[data-theme="dark"] .delete-btn {
-    background: #dc2626;
-    color: white;
-}
-
-[data-theme="dark"] .modal {
-    background: rgba(26, 26, 26, 0.9);
-}
-
-[data-theme="dark"] .modal-content {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .modal-header h2 {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .close-modal {
-    color: var(--text-secondary);
-    background: var(--bg-tertiary);
-}
-
-[data-theme="dark"] .close-modal:hover {
-    color: var(--text-primary);
-    background: var(--accent-color);
-}
-
-[data-theme="dark"] .modal-body input {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .modal-body input::placeholder,
-[data-theme="dark"] .modal-body textarea::placeholder {
-    color: var(--text-muted);
-}
-
-[data-theme="dark"] .modal-body select,
-[data-theme="dark"] .modal-body textarea {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .tab-btn {
-    color: var(--text-secondary);
-}
-
-[data-theme="dark"] .tab-btn.active {
-    color: var(--text-primary);
-    border-bottom-color: var(--accent-color);
-}
-
-[data-theme="dark"] .tab-btn:hover {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .category-item {
-    background: var(--bg-secondary);
-    border-color: var(--border-color);
-}
-
-[data-theme="dark"] .category-item h3 {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .category-item p {
-    color: var(--text-secondary);
-}
-
-[data-theme="dark"] .category-item .category-meta {
-    color: var(--text-muted);
-}
-
-[data-theme="dark"] .loading {
-    color: var(--text-secondary);
-}
 
 

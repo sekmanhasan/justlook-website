@@ -14,8 +14,6 @@ let currentPasswordInput, newPasswordInput, confirmPasswordInput, passwordMessag
 
 // Sayfa yüklendikten sonra DOM elementlerini tanımla
 document.addEventListener('DOMContentLoaded', () => {
-    debugLog('📄 Admin sayfası yüklendi');
-    
     // DOM Elements
     loginScreen = document.getElementById('loginScreen');
     adminPanel = document.getElementById('adminPanel');
@@ -55,13 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     passwordMessage = document.getElementById('passwordMessage');
     updatePasswordBtn = document.getElementById('updatePasswordBtn');
     
-    debugLog('🔍 DOM elementleri kontrol ediliyor...');
-    debugLog(`🔍 addProductBtn: ${addProductBtn ? 'VAR' : 'YOK'}`);
-    debugLog(`🔍 saveProductBtn: ${saveProductBtn ? 'VAR' : 'YOK'}`);
-    debugLog(`🔍 productModal: ${productModal ? 'VAR' : 'YOK'}`);
-    debugLog(`🔍 addCategoryBtn: ${addCategoryBtn ? 'VAR' : 'YOK'}`);
-    debugLog(`🔍 categoryModal: ${categoryModal ? 'VAR' : 'YOK'}`);
-    
     // Event listener'ları kur
     setupEventListeners();
     
@@ -69,15 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.auth) {
         window.auth.onAuthStateChanged((user) => {
             if (user) {
-                debugLog(`👤 Kullanıcı giriş yaptı: ${user.email}`);
                 showAdminPanel();
             } else {
-                debugLog('👤 Kullanıcı çıkış yaptı');
                 showLoginScreen();
             }
         });
-    } else {
-        debugLog('❌ window.auth bulunamadı');
     }
 });
 
@@ -95,12 +82,9 @@ setTimeout(() => {
 
 // Event listener'ları kur
 function setupEventListeners() {
-    debugLog('🔗 Event listener\'lar kuruluyor...');
-    
     // Login
     if (loginBtn) {
         loginBtn.addEventListener('click', async () => {
-            console.log('🔐 Login butonu tıklandı');
             const email = emailInput.value;
             const password = passwordInput.value;
             
@@ -112,9 +96,7 @@ function setupEventListeners() {
             
             try {
                 await window.auth.signInWithEmailAndPassword(email, password);
-                console.log('✅ Giriş başarılı');
             } catch (error) {
-                console.log('❌ Giriş hatası:', error.code);
                 if (error.code === 'auth/user-not-found') {
                     // Kullanıcı yoksa hesap oluştur
                     try {
@@ -136,16 +118,11 @@ function setupEventListeners() {
     // Google Login
     const googleLoginBtn = document.getElementById('googleLoginBtn');
     if (googleLoginBtn) {
-        debugLog('✅ Google login butonu bulundu');
         googleLoginBtn.addEventListener('click', async () => {
-            debugLog('🔄 Google ile giriş başlatılıyor...');
-            
             try {
                 const provider = new firebase.auth.GoogleAuthProvider();
                 const result = await window.auth.signInWithPopup(provider);
                 const user = result.user;
-                
-                debugLog(`👤 Google ile giriş başarılı: ${user.email}`);
                 
                 // Kullanıcı bilgilerini Firestore'a kaydet (eğer yoksa)
                 const userDoc = await window.db.collection('users').doc(user.uid).get();
@@ -158,11 +135,9 @@ function setupEventListeners() {
                         isAdmin: true,
                         favorites: []
                     });
-                    debugLog('✅ Admin kullanıcısı oluşturuldu');
                 }
                 
             } catch (error) {
-                debugLog(`❌ Google Auth Hatası: ${error.message}`);
                 if (loginMessage) {
                     loginMessage.textContent = 'Google ile giriş başarısız: ' + error.message;
                     loginMessage.style.color = '#e74c3c';
@@ -174,27 +149,19 @@ function setupEventListeners() {
     // Logout
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            debugLog('🚪 Logout butonu tıklandı');
             window.auth.signOut();
         });
     }
     
-    // Yeni Ürün Modal'ını Açf
+    // Yeni Ürün Modal'ını Aç
     if (addProductBtn) {
-        debugLog('✅ addProductBtn bulundu, event listener ekleniyor');
         addProductBtn.addEventListener('click', () => {
-            debugLog('➕ Yeni ürün butonu tıklandı');
             currentEditingId = null;
             clearProductForm();
             if (productModal) {
                 productModal.classList.add('active');
-                debugLog('✅ Modal açıldı');
-            } else {
-                debugLog('❌ productModal bulunamadı');
             }
         });
-    } else {
-        debugLog('❌ addProductBtn bulunamadı!');
     }
     
     // Modal'ı Kapat
@@ -209,16 +176,11 @@ function setupEventListeners() {
     // Ürün Kaydet
     if (saveProductBtn) {
         saveProductBtn.addEventListener('click', async () => {
-            debugLog('💾 Kaydet butonuna tıklandı');
-            
             const name = document.getElementById('productName').value;
             const brand = document.getElementById('productBrand').value;
             const category = document.getElementById('productCategory').value;
             const price = document.getElementById('productPrice').value;
             const link = document.getElementById('productLink').value;
-            
-            debugLog(`📝 Form verileri: ${name}, ${brand}, ${category}, ${price}`);
-            debugLog(`📁 Seçili dosyalar: ${selectedFiles.length}`);
             
             if (!name || !brand || !category || !price) {
                 alert('Lütfen tüm alanları doldurun!');
@@ -230,16 +192,10 @@ function setupEventListeners() {
                 return;
             }
             
-            debugLog('✅ Form validasyonu geçti');
-            
             saveProductBtn.textContent = `Yükleniyor... (0/${selectedFiles.length})`;
             saveProductBtn.disabled = true;
             
             try {
-                debugLog('🔄 Firebase servisleri kontrol ediliyor...');
-                debugLog(`🔍 window.storage: ${typeof window.storage}`);
-                debugLog(`🔍 window.db: ${typeof window.db}`);
-                
                 if (!window.storage || !window.db) {
                     alert('Firebase servisleri yüklenemedi! Sayfayı yenileyin.');
                     return;
@@ -247,15 +203,11 @@ function setupEventListeners() {
                 
                 const imageUrls = [];
                 
-                debugLog('📤 Fotoğraflar Cloudinary\'ye yükleniyor...');
                 // Upload all images to Cloudinary
                 for (let i = 0; i < selectedFiles.length; i++) {
                     const file = selectedFiles[i];
-                    debugLog(`📷 Fotoğraf ${i + 1}/${selectedFiles.length} yükleniyor: ${file.name}`);
                     
                     try {
-                        debugLog('🔄 Cloudinary\'ye yükleniyor...');
-                        
                         const formData = new FormData();
                         formData.append('file', file);
                         formData.append('upload_preset', window.cloudinaryConfig.uploadPreset);
@@ -272,43 +224,30 @@ function setupEventListeners() {
                         
                         const data = await response.json();
                         const url = data.secure_url;
-                        
-                        debugLog('✅ Cloudinary yükleme başarılı');
                         imageUrls.push(url);
-                        debugLog(`✅ Fotoğraf ${i + 1} tamamlandı: ${url.substring(0, 50)}...`);
                         saveProductBtn.textContent = `Yükleniyor... (${i + 1}/${selectedFiles.length})`;
                         
                     } catch (uploadError) {
-                        debugLog(`❌ Cloudinary yükleme hatası: ${uploadError.message}`);
                         throw uploadError;
                     }
                 }
                 
-                console.log('💾 Ürün verisi oluşturuluyor...');
                 const productData = {
                     name,
                     brand,
                     category,
                     price,
-                    link: link || '', // Ürün linki (opsiyonel)
+                    link: link || '',
                     images: imageUrls,
-                    imageUrl: imageUrls[0], // İlk fotoğraf (eski sistem için uyumluluk)
+                    imageUrl: imageUrls[0],
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                console.log('📦 Ürün verisi:', productData);
-                
                 if (currentEditingId) {
-                    // Update
-                    console.log('🔄 Ürün güncelleniyor...');
                     await window.db.collection('products').doc(currentEditingId).update(productData);
-                    console.log('✅ Ürün güncellendi');
                 } else {
-                    // Create
-                    console.log('➕ Yeni ürün oluşturuluyor...');
                     productData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     await window.db.collection('products').add(productData);
-                    console.log('✅ Yeni ürün oluşturuldu');
                 }
                 
                 productModal.classList.remove('active');
@@ -320,7 +259,6 @@ function setupEventListeners() {
             } finally {
                 saveProductBtn.disabled = false;
                 saveProductBtn.textContent = 'Kaydet';
-                console.log('🔄 Buton tekrar aktif edildi');
             }
         });
     }
@@ -328,11 +266,8 @@ function setupEventListeners() {
     // Fotoğraf Seç
     const fileInput = document.getElementById('productImages');
     if (fileInput) {
-        debugLog('✅ Fotoğraf input bulundu, event listener ekleniyor');
         fileInput.addEventListener('change', (e) => {
-            debugLog('📁 Fotoğraf seçimi değişti');
             selectedFiles = Array.from(e.target.files);
-            debugLog(`📁 Seçilen dosyalar: ${selectedFiles.length}`);
             
             // Preview
             const preview = document.getElementById('imagePreview');
@@ -430,12 +365,10 @@ function setupEventListeners() {
     // Kategori Modal'ını Aç
     if (addCategoryBtn) {
         addCategoryBtn.addEventListener('click', () => {
-            debugLog('➕ Yeni kategori butonu tıklandı');
             currentEditingId = null;
             clearCategoryForm();
             if (categoryModal) {
                 categoryModal.classList.add('active');
-                debugLog('✅ Kategori modal açıldı');
             }
         });
     }
@@ -450,8 +383,6 @@ function setupEventListeners() {
     // Kategori Kaydet
     if (saveCategoryBtn) {
         saveCategoryBtn.addEventListener('click', async () => {
-            debugLog('💾 Kategori kaydet butonuna tıklandı');
-            
             const name = document.getElementById('categoryName').value;
             const description = document.getElementById('categoryDescription').value;
             
@@ -471,14 +402,10 @@ function setupEventListeners() {
                 };
                 
                 if (currentEditingId) {
-                    // Update
                     await window.db.collection('categories').doc(currentEditingId).update(categoryData);
-                    debugLog('✅ Kategori güncellendi');
                 } else {
-                    // Create
                     categoryData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     await window.db.collection('categories').add(categoryData);
-                    debugLog('✅ Yeni kategori oluşturuldu');
                 }
                 
                 categoryModal.classList.remove('active');
@@ -493,8 +420,6 @@ function setupEventListeners() {
             }
         });
     }
-    
-    debugLog('✅ Event listener\'lar kuruldu');
 }
 
 // Admin panelini göster
@@ -508,8 +433,6 @@ function showAdminPanel() {
 
 // Tab switching
 function switchTab(tabName) {
-    debugLog(`🔄 Tab değiştiriliyor: ${tabName}`);
-    
     // Remove active class from all tabs and sections
     productsTab.classList.remove('active');
     categoriesTab.classList.remove('active');

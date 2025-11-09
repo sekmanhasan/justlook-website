@@ -39,7 +39,8 @@ const translations = {
         'shareProduct': 'Paylaş',
         'shareWhatsApp': 'WhatsApp',
         'shareInstagram': 'Instagram',
-        'shareCopy': 'Kopyala'
+        'shareCopy': 'Kopyala',
+        'goToProduct': 'Ürüne Git'
     },
     en: {
         'login': 'Login',
@@ -70,12 +71,12 @@ const translations = {
         'shareProduct': 'Share',
         'shareWhatsApp': 'WhatsApp',
         'shareInstagram': 'Instagram',
-        'shareCopy': 'Copy'
+        'shareCopy': 'Copy',
+        'goToProduct': 'Go to Product'
     }
 };
 
 let currentLang = localStorage.getItem('language') || 'tr';
-let currentTheme = localStorage.getItem('theme') || 'light';
 
 
 function setLanguage(lang) {
@@ -86,61 +87,6 @@ function setLanguage(lang) {
     updateSearchPanel();
 }
 
-// Ses efektleri
-function playSwitchSound() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
-    
-    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
-    
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.1);
-}
-
-function setTheme(theme) {
-    currentTheme = theme;
-    localStorage.setItem('theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
-    updateThemeUI();
-    playSwitchSound();
-}
-
-function updateThemeUI() {
-    const switchElement = document.getElementById('themeSwitch');
-    const switchLabel = document.getElementById('switchLabel');
-    
-    if (switchElement) {
-        if (currentTheme === 'dark') {
-            switchElement.classList.add('active');
-        } else {
-            switchElement.classList.remove('active');
-        }
-    }
-    
-    if (switchLabel) {
-        switchLabel.textContent = currentTheme === 'light' ? 'Light' : 'Dark';
-    }
-}
-
-function setupThemeToggle() {
-    const themeSwitch = document.getElementById('themeSwitch');
-    
-    if (themeSwitch) {
-        themeSwitch.addEventListener('click', () => {
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setTheme(newTheme);
-        });
-    }
-}
 
 function updateLanguageUI() {
     // Update language toggle
@@ -165,6 +111,12 @@ function updateLanguageUI() {
         if (element.dataset[currentLang]) {
             element.textContent = element.dataset[currentLang];
         }
+    });
+    
+    // Update "Ürüne Git" buttons
+    const productLinkBtns = document.querySelectorAll('.product-link-btn');
+    productLinkBtns.forEach(btn => {
+        btn.textContent = translations[currentLang].goToProduct;
     });
 }
 
@@ -556,25 +508,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Firebase'den ürünleri yükle
     loadFirebaseProducts();
     
-    // Initialize theme and language system (delay to ensure DOM is ready)
+    // Initialize language system (delay to ensure DOM is ready)
     setTimeout(() => {
-        setupThemeToggle();
         setupLanguageToggle();
         
-        // Her zaman UI'ı güncelle (kayıtlı tema ve dil varsa)
-        const savedTheme = localStorage.getItem('theme');
+        // Her zaman UI'ı güncelle (kayıtlı dil varsa)
         const savedLang = localStorage.getItem('language');
-        
-        if (savedTheme) {
-            currentTheme = savedTheme;
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        }
         
         if (savedLang) {
             currentLang = savedLang;
         }
         
-        updateThemeUI();
         updateLanguageUI();
     }, 100);
 });
@@ -656,7 +600,7 @@ async function loadFirebaseProducts() {
                         <h3 class="product-name">${product.name}</h3>
                         <span class="product-price">${product.price}</span>
                     </div>
-                    ${product.link ? `<button class="product-link-btn" data-link="${product.link}">Ürüne Git</button>` : ''}
+                    ${product.link ? `<button class="product-link-btn" data-link="${product.link}">${translations[currentLang].goToProduct}</button>` : ''}
                 </div>
             `;
             
