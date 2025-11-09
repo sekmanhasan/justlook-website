@@ -1,0 +1,257 @@
+================================================================================
+JUSTLOOK E-COMMERCE WEBSITE - PROJE BİLGİLERİ
+================================================================================
+Oluşturulma Tarihi: 2025-01-XX
+Son Güncelleme: 2025-01-XX
+Agent: Claude (Auto - Cursor AI)
+
+================================================================================
+PROJE GENEL BİLGİLERİ
+================================================================================
+
+Proje Adı: justlook
+Açıklama: Modern ve minimalist e-ticaret sitesi. Firebase ile güçlendirilmiş.
+
+GitHub Repository: https://github.com/sekmanhasan/justlook-website
+GitHub Pages: (Aktif olabilir - CNAME dosyası mevcut)
+
+================================================================================
+KULLANILAN TEKNOLOJİLER
+================================================================================
+
+Frontend:
+- HTML5
+- CSS3
+- Vanilla JavaScript (ES6+)
+
+Backend/Servisler:
+- Firebase Authentication (Kullanıcı girişi)
+- Firebase Firestore (Veritabanı - ürünler, kullanıcılar, favoriler)
+- Firebase Storage (Opsiyonel - şu an kullanılmıyor)
+- Cloudinary (Ürün görselleri için cloud storage)
+
+Firebase Proje ID: justlook-e7669
+Cloudinary Cloud Name: dfdrdbmjc
+Cloudinary Upload Preset: justlook_products
+
+================================================================================
+DOSYA YAPISI
+================================================================================
+
+Ana Sayfa:
+- index.html (Ana sayfa)
+- style.css (Ana sayfa stilleri)
+- script-simple.js (Ana sayfa JavaScript)
+
+Admin Paneli:
+- admin.html (Admin paneli)
+- admin-style.css (Admin paneli stilleri)
+- admin-script.js (Admin paneli JavaScript)
+
+Kullanıcı Sayfaları:
+- login.html (Giriş sayfası)
+- signup.html (Kayıt sayfası)
+- profile.html (Profil sayfası)
+- profile-style.css (Profil sayfası stilleri)
+- profile-script.js (Profil sayfası JavaScript)
+
+Diğer:
+- firebase-config.js (Firebase yapılandırması)
+- 404.html (404 sayfası)
+- README.md (Proje dokümantasyonu)
+- CNAME (GitHub Pages domain yapılandırması)
+
+================================================================================
+ÖZELLİKLER
+================================================================================
+
+Kullanıcı Özellikleri:
+✅ Minimalist tasarım
+✅ Canlı arama (ürün arama)
+✅ Filtreleme (kategori ve fiyat aralığı)
+✅ Favoriler (kullanıcı bazlı)
+✅ Ürün paylaşımı (WhatsApp, Instagram, Link kopyalama)
+✅ Çoklu dil desteği (Türkçe/İngilizce)
+✅ Responsive tasarım
+✅ Ürün görsel slider'ı (çoklu görsel)
+✅ Animasyonlu logo
+✅ Ses efektleri
+
+Admin Özellikleri:
+✅ Ürün yönetimi (Ekleme, Düzenleme, Silme)
+✅ Kategori yönetimi (Ekleme, Düzenleme, Silme)
+✅ Google ile giriş
+✅ Email/Şifre ile giriş
+✅ Şifre değiştirme (opsiyonel)
+✅ Çoklu görsel yükleme (Cloudinary)
+
+Kaldırılan Özellikler:
+❌ Dark mode (kaldırıldı - 2025-01-XX)
+
+================================================================================
+FIREBASE YAPILANDIRMASI
+================================================================================
+
+Collections:
+- products (Ürünler)
+  - name (string)
+  - brand (string)
+  - category (string)
+  - price (string)
+  - link (string, opsiyonel)
+  - images (array of strings - Cloudinary URLs)
+  - imageUrl (string - ilk görsel, uyumluluk için)
+  - createdAt (timestamp)
+  - updatedAt (timestamp)
+
+- users (Kullanıcılar)
+  - name (string)
+  - email (string)
+  - createdAt (timestamp)
+  - favorites (array of strings - ürün isimleri)
+  - isAdmin (boolean, opsiyonel)
+
+- categories (Kategoriler)
+  - name (string)
+  - description (string, opsiyonel)
+  - createdAt (timestamp)
+  - updatedAt (timestamp)
+
+================================================================================
+ÖNEMLİ NOTLAR
+================================================================================
+
+1. DİL SİSTEMİ:
+   - Çeviriler script-simple.js içinde translations objesi içinde
+   - LocalStorage'da 'language' key'i ile saklanıyor
+   - Varsayılan dil: Türkçe (tr)
+   - Dil değiştirme: Header'daki dil butonu ile
+
+2. FAVORİLER:
+   - Kullanıcı bazlı (Firebase Authentication gerekli)
+   - Firestore'da users collection'ında favorites array'i olarak saklanıyor
+   - Ürün isimleri (name) ile eşleştiriliyor
+
+3. ÜRÜN GÖRSELLERİ:
+   - Cloudinary'ye yükleniyor
+   - Çoklu görsel desteği var
+   - İlk görsel imageUrl olarak da saklanıyor (eski sistem uyumluluğu için)
+
+4. ADMIN PANELİ:
+   - İlk girişte otomatik hesap oluşturuluyor
+   - Google ile giriş destekleniyor
+   - Debug paneli kaldırıldı (2025-01-XX)
+
+5. GÜVENLİK:
+   - Firebase Authentication kullanılıyor
+   - Admin paneli için authentication zorunlu
+   - Firestore security rules kontrol edilmeli
+
+================================================================================
+SON YAPILAN DEĞİŞİKLİKLER
+================================================================================
+
+2025-01-XX:
+- Dark mode özelliği tamamen kaldırıldı
+  * Tüm dark mode CSS'leri temizlendi
+  * Theme switch butonu kaldırıldı
+  * JavaScript'teki theme kodları temizlendi
+  * style.css, profile-style.css, admin-style.css, login.html'den dark mode stilleri kaldırıldı
+
+- "Ürüne Git" butonu çeviri sistemine eklendi
+  * Türkçe: "Ürüne Git"
+  * İngilizce: "Go to Product"
+  * Dil değiştiğinde butonlar otomatik güncelleniyor
+
+- Admin panel düzeltmeleri
+  * Debug paneli kaldırıldı (admin.html ve admin-script.js)
+  * Ürün kartlarının düzeni düzeltildi
+  * Grid layout sorunları giderildi
+  * product-item, product-images, product-info CSS'leri düzenlendi
+
+================================================================================
+GELİŞTİRME NOTLARI
+================================================================================
+
+1. Agent: Claude (Auto - Cursor AI) kullanılıyor
+2. Türkçe dil desteği öncelikli
+3. Minimalist tasarım prensibi korunmalı
+4. Firebase servislerinin yüklenmesi için window.firebaseReady promise kullanılıyor
+5. LocalStorage kullanımı:
+   - 'language': Dil tercihi (tr/en)
+   - Theme artık kullanılmıyor (kaldırıldı)
+
+================================================================================
+BİLİNEN SORUNLAR / GELECEKTE YAPILACAKLAR
+================================================================================
+
+Bilinen Sorunlar:
+- Yok (şu an)
+
+Gelecekte Yapılabilecekler:
+- Firestore security rules kontrolü ve güncelleme
+- Ürün görselleri için lazy loading
+- PWA (Progressive Web App) desteği
+- Ürün detay sayfası
+- Sepet sistemi
+- Sipariş yönetimi
+- Admin paneli için daha fazla istatistik
+
+================================================================================
+KULLANIM TALİMATLARI
+================================================================================
+
+Admin Paneline Giriş:
+1. admin.html sayfasını aç
+2. İlk giriş: Email ve şifre gir (otomatik hesap oluşturulur)
+3. Sonraki girişler: Aynı email/şifre ile giriş yap
+4. Google ile giriş de destekleniyor
+
+Ürün Ekleme:
+1. Admin paneline giriş yap
+2. "Yeni Ürün" butonuna tıkla
+3. Ürün bilgilerini doldur (Ad, Marka, Kategori, Fiyat, Link)
+4. Görsel seç (birden fazla görsel seçilebilir)
+5. "Kaydet" tıkla
+6. Görseller Cloudinary'ye yüklenir ve ürün Firestore'a kaydedilir
+
+Ürün Düzenleme/Silme:
+- Her ürün kartında "Düzenle" ve "Sil" butonları var
+
+Kategori Yönetimi:
+- Admin panelinde "Kategoriler" sekmesinden kategori eklenebilir/düzenlenebilir/silinebilir
+- Kategoriler ürün eklerken dropdown'da görünür
+
+================================================================================
+GITHUB YÖNETİMİ
+================================================================================
+
+Repository: https://github.com/sekmanhasan/justlook-website
+Branch: main
+GitHub Pages: Aktif (CNAME dosyası mevcut)
+
+Commit Mesajları:
+- Açıklayıcı Türkçe commit mesajları kullanılıyor
+- Örnek: "Dark mode kaldırıldı, ürün butonu çeviri sistemi eklendi, admin panel debug paneli kaldırıldı ve ürün düzeni düzeltildi"
+
+================================================================================
+İLETİŞİM / NOTLAR
+================================================================================
+
+- Proje sahibi: sekmanhasan
+- GitHub: https://github.com/sekmanhasan/justlook-website
+- Bu dosya proje hakkında önemli bilgileri içerir
+- Başka bir zaman projeye döndüğünde bu dosyayı okuyarak hızlıca hatırlayabilirsin
+
+================================================================================
+SON NOT
+================================================================================
+
+Bu proje minimalist bir e-ticaret sitesidir. Tasarım sadeliği ve kullanıcı deneyimi ön plandadır.
+Firebase ile backend işlemleri yönetilmektedir. Cloudinary ile görsel yönetimi yapılmaktadır.
+
+Agent: Claude (Auto - Cursor AI) ile geliştirildi.
+Türkçe dil desteği önceliklidir.
+
+================================================================================
+
