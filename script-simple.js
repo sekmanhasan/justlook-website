@@ -114,9 +114,9 @@ function updateLanguageUI() {
     });
     
     // Update "Ürüne Git" buttons
-    const productLinkBtns = document.querySelectorAll('.product-link-btn');
-    productLinkBtns.forEach(btn => {
-        btn.textContent = translations[currentLang].goToProduct;
+    const productLinkBtns = document.querySelectorAll('.product-link-btn span');
+    productLinkBtns.forEach(span => {
+        span.textContent = translations[currentLang].goToProduct;
     });
 }
 
@@ -600,7 +600,12 @@ async function loadFirebaseProducts() {
                         <h3 class="product-name">${product.name}</h3>
                         <span class="product-price">${product.price}</span>
                     </div>
-                    ${product.link ? `<button class="product-link-btn" data-link="${product.link}">${translations[currentLang].goToProduct}</button>` : ''}
+                    ${product.link ? `<button class="product-link-btn" data-link="${product.link}">
+                        <span>${translations[currentLang].goToProduct}</span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>` : ''}
                 </div>
             `;
             
