@@ -5,7 +5,225 @@ console.log('🚀 Script yükleniyor...');
 let favorites = new Set();
 let filterPanel = null;
 let searchPanel = null;
+let cartSidebar = null;
 let currentUser = null;
+
+// ========== CART SYSTEM (LocalStorage) ==========
+function getCart() {
+    try {
+        return JSON.parse(localStorage.getItem('cart')) || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveCart(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartBadge();
+}
+
+function addToCart(product) {
+    const cart = getCart();
+    const existing = cart.find(item => item.name === product.name);
+    
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({
+            name: product.name,
+            brand: product.brand,
+            price: product.price,
+            imageUrl: (product.images && product.images.length > 0) ? product.images[0] : product.imageUrl,
+            quantity: 1
+        });
+    }
+    
+    saveCart(cart);
+    showCartNotification();
+    
+    // Sidebar açıksa güncelle
+    if (cartSidebar && cartSidebar.classList.contains('active')) {
+        renderCartSidebar();
+    }
+}
+
+function removeFromCart(productName) {
+    let cart = getCart();
+    cart = cart.filter(item => item.name !== productName);
+    saveCart(cart);
+    renderCartSidebar();
+}
+
+function updateCartQuantity(productName, delta) {
+    const cart = getCart();
+    const item = cart.find(i => i.name === productName);
+    
+    if (item) {
+        item.quantity += delta;
+        if (item.quantity <= 0) {
+            removeFromCart(productName);
+            return;
+        }
+    }
+    
+    saveCart(cart);
+    renderCartSidebar();
+}
+
+function getCartTotal() {
+    const cart = getCart();
+    return cart.reduce((sum, item) => {
+        const price = parseFloat(item.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0;
+        return sum + (price * item.quantity);
+    }, 0);
+}
+
+function getCartItemCount() {
+    const cart = getCart();
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+}
+
+function updateCartBadge() {
+    const badge = document.getElementById('cartBadge');
+    if (badge) {
+        const count = getCartItemCount();
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+}
+
+function showCartNotification() {
+    // Kısa bir animasyon ile kullanıcıya bildir
+    const cartBtn = document.querySelector('.cart-icon-btn');
+    if (cartBtn) {
+        cartBtn.classList.add('cart-bounce');
+        setTimeout(() => cartBtn.classList.remove('cart-bounce'), 500);
+    }
+}
+
+function createCartSidebar() {
+    if (cartSidebar && document.body.contains(cartSidebar)) {
+        cartSidebar.classList.add('active');
+        renderCartSidebar();
+        return;
+    }
+    
+    cartSidebar = document.createElement('div');
+    cartSidebar.className = 'cart-sidebar';
+    cartSidebar.innerHTML = `
+        <div class="cart-overlay"></div>
+        <div class="cart-panel">
+            <div class="cart-header">
+                <h3 data-tr="Sepet" data-en="Cart">${translations[currentLang].cart || 'Sepet'}</h3>
+                <button class="close-btn cart-close-btn">✕</button>
+            </div>
+            <div class="cart-items"></div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span data-tr="Toplam" data-en="Total">${translations[currentLang].total || 'Toplam'}</span>
+                    <span class="cart-total-price">₺0</span>
+                </div>
+                <button class="cart-checkout-btn" data-tr="Ödeme Yap" data-en="Checkout">${translations[currentLang].checkout || 'Ödeme Yap'}</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(cartSidebar);
+    
+    setTimeout(() => cartSidebar.classList.add('active'), 10);
+    
+    // Kapat butonları
+    cartSidebar.querySelector('.cart-close-btn').addEventListener('click', closeCartSidebar);
+    cartSidebar.querySelector('.cart-overlay').addEventListener('click', closeCartSidebar);
+    
+    // Ödeme butonu (şimdilik bilgi ver)
+    cartSidebar.querySelector('.cart-checkout-btn').addEventListener('click', () => {
+        const lang = currentLang;
+        if (lang === 'tr') {
+            alert('Ödeme sistemi yakında aktif olacak!');
+        } else {
+            alert('Payment system coming soon!');
+        }
+    });
+    
+    renderCartSidebar();
+}
+
+function closeCartSidebar() {
+    if (cartSidebar) {
+        cartSidebar.classList.remove('active');
+    }
+}
+
+function renderCartSidebar() {
+    if (!cartSidebar) return;
+    
+    const cart = getCart();
+    const itemsContainer = cartSidebar.querySelector('.cart-items');
+    const totalPrice = cartSidebar.querySelector('.cart-total-price');
+    const checkoutBtn = cartSidebar.querySelector('.cart-checkout-btn');
+    
+    if (cart.length === 0) {
+        itemsContainer.innerHTML = `
+            <div class="cart-empty">
+                <svg width="48" height="48" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 6H18L16.5 13H7.5L6 6Z" stroke="#ccc" stroke-width="1" stroke-linejoin="round"/>
+                    <path d="M6 6L5 2H2" stroke="#ccc" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="8.5" cy="16.5" r="1.5" stroke="#ccc" stroke-width="1"/>
+                    <circle cx="15.5" cy="16.5" r="1.5" stroke="#ccc" stroke-width="1"/>
+                </svg>
+                <p data-tr="Sepetiniz boş" data-en="Your cart is empty">${translations[currentLang].cartEmpty || 'Sepetiniz boş'}</p>
+            </div>
+        `;
+        totalPrice.textContent = '₺0';
+        checkoutBtn.disabled = true;
+        return;
+    }
+    
+    checkoutBtn.disabled = false;
+    
+    itemsContainer.innerHTML = cart.map(item => `
+        <div class="cart-item" data-name="${item.name}">
+            <div class="cart-item-image">
+                <img src="${item.imageUrl}" alt="${item.name}">
+            </div>
+            <div class="cart-item-info">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-brand">${item.brand}</div>
+                <div class="cart-item-price">${item.price}</div>
+            </div>
+            <div class="cart-item-actions">
+                <div class="cart-quantity-controls">
+                    <button class="qty-btn qty-minus" data-name="${item.name}">−</button>
+                    <span class="qty-value">${item.quantity}</span>
+                    <button class="qty-btn qty-plus" data-name="${item.name}">+</button>
+                </div>
+                <button class="cart-remove-btn" data-name="${item.name}">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    // Event listeners
+    itemsContainer.querySelectorAll('.qty-minus').forEach(btn => {
+        btn.addEventListener('click', () => updateCartQuantity(btn.dataset.name, -1));
+    });
+    
+    itemsContainer.querySelectorAll('.qty-plus').forEach(btn => {
+        btn.addEventListener('click', () => updateCartQuantity(btn.dataset.name, 1));
+    });
+    
+    itemsContainer.querySelectorAll('.cart-remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => removeFromCart(btn.dataset.name));
+    });
+    
+    // Toplam fiyat
+    const total = getCartTotal();
+    totalPrice.textContent = `₺${total.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+}
 
 // DOM yüklenince başlat
 // ========== LANGUAGE SYSTEM ==========
@@ -40,7 +258,13 @@ const translations = {
         'shareWhatsApp': 'WhatsApp',
         'shareInstagram': 'Instagram',
         'shareCopy': 'Kopyala',
-        'goToProduct': 'Ürüne Git'
+        'goToProduct': 'Ürüne Git',
+        'cart': 'Sepet',
+        'addToCart': 'Sepete Ekle',
+        'cartEmpty': 'Sepetiniz boş',
+        'total': 'Toplam',
+        'checkout': 'Ödeme Yap',
+        'remove': 'Kaldır'
     },
     en: {
         'login': 'Login',
@@ -72,7 +296,13 @@ const translations = {
         'shareWhatsApp': 'WhatsApp',
         'shareInstagram': 'Instagram',
         'shareCopy': 'Copy',
-        'goToProduct': 'Go to Product'
+        'goToProduct': 'Go to Product',
+        'cart': 'Cart',
+        'addToCart': 'Add to Cart',
+        'cartEmpty': 'Your cart is empty',
+        'total': 'Total',
+        'checkout': 'Checkout',
+        'remove': 'Remove'
     }
 };
 
@@ -118,6 +348,27 @@ function updateLanguageUI() {
     productLinkBtns.forEach(span => {
         span.textContent = translations[currentLang].goToProduct;
     });
+    
+    // Update "Sepete Ekle" buttons
+    const addToCartBtns = document.querySelectorAll('.add-to-cart-btn span');
+    addToCartBtns.forEach(span => {
+        span.textContent = translations[currentLang].addToCart;
+    });
+    
+    // Update cart sidebar if open
+    if (cartSidebar && document.body.contains(cartSidebar)) {
+        const cartHeader = cartSidebar.querySelector('.cart-header h3');
+        if (cartHeader) cartHeader.textContent = translations[currentLang].cart;
+        
+        const totalLabel = cartSidebar.querySelector('.cart-total span:first-child');
+        if (totalLabel) totalLabel.textContent = translations[currentLang].total;
+        
+        const checkoutBtn = cartSidebar.querySelector('.cart-checkout-btn');
+        if (checkoutBtn) checkoutBtn.textContent = translations[currentLang].checkout;
+        
+        const emptyMsg = cartSidebar.querySelector('.cart-empty p');
+        if (emptyMsg) emptyMsg.textContent = translations[currentLang].cartEmpty;
+    }
 }
 
 function setupLanguageToggle() {
@@ -290,6 +541,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // ========== CART BUTTON ==========
+    const cartBtn = document.querySelector('[aria-label="Cart"]');
+    if (cartBtn) {
+        cartBtn.addEventListener('click', function() {
+            console.log('✅ Cart tıklandı!');
+            createCartSidebar();
+        });
+    }
+    
+    // Sayfa yüklendiğinde badge'i güncelle
+    updateCartBadge();
     
     // ========== FILTER BUTTON ==========
     filterBtn.addEventListener('click', function() {
@@ -606,6 +869,15 @@ async function loadFirebaseProducts() {
                             <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>` : ''}
+                    <button class="add-to-cart-btn" data-tr="Sepete Ekle" data-en="Add to Cart">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 6H18L16.5 13H7.5L6 6Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+                            <path d="M6 6L5 2H2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="8.5" cy="16.5" r="1.5" stroke="currentColor" stroke-width="1.2"/>
+                            <circle cx="15.5" cy="16.5" r="1.5" stroke="currentColor" stroke-width="1.2"/>
+                        </svg>
+                        <span>${translations[currentLang].addToCart}</span>
+                    </button>
                 </div>
             `;
             
@@ -689,6 +961,26 @@ async function loadFirebaseProducts() {
                         window.open(link, '_blank');
                         playSound();
                     }
+                });
+            }
+            
+            // Sepete Ekle butonu event listener'ı
+            const addToCartBtn = card.querySelector('.add-to-cart-btn');
+            if (addToCartBtn) {
+                addToCartBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    addToCart(product);
+                    playSound();
+                    
+                    // Buton feedback
+                    const span = addToCartBtn.querySelector('span');
+                    const originalText = span.textContent;
+                    span.textContent = currentLang === 'tr' ? 'Eklendi ✓' : 'Added ✓';
+                    addToCartBtn.classList.add('added');
+                    setTimeout(() => {
+                        span.textContent = originalText;
+                        addToCartBtn.classList.remove('added');
+                    }, 1200);
                 });
             }
             
